@@ -1,17 +1,20 @@
-import 'package:flutter_translate/flutter_translate.dart';
+import 'package:translator/translator.dart';
 
-class DataProcessor {
-  Future<String> translateData(String data, String targetLocale) async {
-    try {
-      var translation = await Translator.translate(
-        data,
-        from: 'auto',  // Detect source language automatically
-        to: targetLocale,
-      );
-      return translation.text;
-    } catch (e) {
-      print('Translation error: $e');
-      return data;  // Return original data if translation fails
-    }
-  }
-}
+// class DataProcessor {
+//   final translator = GoogleTranslator();
+//   Future<String> translateData(String data, String targetLocale) async {
+//     try {
+//       var translation = await translator.translate(
+//         data,
+//         from: 'auto',
+//         to: targetLocale,
+//       );
+//       return translation.text;
+//     } catch (e) {
+//       print('Translation error: $e');
+//       return data;  // Return original data if translation fails
+//     }
+//   }
+// }
+//
+
