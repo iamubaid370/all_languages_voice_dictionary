@@ -10,16 +10,12 @@ class SpeakerAnimation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Positioned(
-        // bottom: 100.h,
-        // right: 100.w,
-        child: Image.asset(
-          'assets/speaker_animation.gif',
-          height: Get.height.h,
+      child: Image.asset(
+        'assets/speaker_animation.gif',
+        height: Get.height.h,
 
-          //fit: BoxFit.fill,
+        //fit: BoxFit.fill,
 
-        ),
       ),
     );
   }

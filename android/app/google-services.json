@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "805216467857",
+    "project_id": "all-languages-voice-dictionary",
+    "storage_bucket": "all-languages-voice-dictionary.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:805216467857:android:d9b1eeec74a7f8096d3830",
+        "android_client_info": {
+          "package_name": "com.pzapps.alllanguagesdictionary"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDI9kU6wze1wrYkcENszU3SmII16nag83o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

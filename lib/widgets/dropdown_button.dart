@@ -46,7 +46,7 @@ import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 
 Widget customDropDownButton(
-    RxString dropDownValue, Function(String?) onChanged, Color color) {
+    RxString dropDownValue, Function(String?) onChanged, Color color,Color color2) {
   // var languages = [
   //   'English',
   //   'Urdu',
@@ -110,7 +110,7 @@ Widget customDropDownButton(
             child: Text(
               language,
               style: TextStyle(
-                  color: Color(0xFFE64D3D),
+                  color: color2,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   fontFamily: 'Arial'),
@@ -120,6 +120,8 @@ Widget customDropDownButton(
         }).toList(),
         onChanged: onChanged,
         menuWidth: 135.w,
+
+        ///TODO
         borderRadius: BorderRadius.circular(8),
         //dropdownColor: Color(0xFFEFEFEF),
         dropdownColor: color,

@@ -1,23 +1,29 @@
+import 'dart:async';
+
 import 'package:all_languages_voice_dictionary/View/favourite_screen/favourite_controller.dart';
 import 'package:all_languages_voice_dictionary/ads/adshelper.dart';
 import 'package:all_languages_voice_dictionary/model/dictionary_model.dart';
+import 'package:app_settings/app_settings.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:translator/translator.dart';
 import 'package:path/path.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../services/api_services.dart';
 import '../../translate_data/data_processor.dart';
 
 class HomeScreenController extends GetxController {
-
   TextEditingController textEditingController = TextEditingController();
   FavouriteController favouriteController = Get.put(FavouriteController());
   final translator = GoogleTranslator();
@@ -36,64 +42,218 @@ class HomeScreenController extends GetxController {
   AdsHelper adsHelper = AdsHelper();
   FocusNode focusNode = FocusNode();
 
+  // Future connectionStatus()async{
+  //   final connectivityResult = await Connectivity().checkConnectivity();
+  //   if(connectivityResult==ConnectivityResult.none){
+  //       Get.dialog(
+  //         AlertDialog(
+  //           title: Text("No Internet Connection"),
+  //           content: Text("Please enable internet to continue."),
+  //           actions: [
+  //             TextButton(
+  //               onPressed: () async {
+  //                 await openAppSettings();
+  //                 Get.back(); // Close the dialog
+  //               },
+  //               child: Text("Open Settings"),
+  //             ),
+  //           ],
+  //         ),
+  //         barrierDismissible: false,
+  //       );
+  //   }
+  //
+  // }
+
+
+
+
+  ///INTERNET CONNECTION DIALOG
+  ///
+  RxBool isConnected = true.obs;
+
+  Future<void> checkInternetConnection() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    print(connectivityResult.toString()); // Print for debugging
+
+    // Check if there is no connection
+    if (!connectivityResult.contains(ConnectivityResult.wifi) &&
+        !connectivityResult.contains(ConnectivityResult.mobile)) {
+      isConnected.value = false;
+      showNoInternetDialog();
+      print("NOT CONNECTED");
+    } else {
+      isConnected.value = true;
+      print("Connected to the Internet");
+    }
+  }
+
+  // Method to show no internet dialog
+  void showNoInternetDialog() {
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: Color(0xFFE64D3D),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+        ),
+        titlePadding: EdgeInsets.zero,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(), // empty space to push the cross button to the right
+            IconButton(
+              icon: Icon(Icons.close,color: Colors.white,),
+              onPressed: () {
+                Get.back();
+              },
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              'assets/no_internet.png', // Your big logo in the center
+              height: 100,
+              width: 100,
+            ),
+            SizedBox(height: 20),
+            Text(
+              "No Internet Connection",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: openWifiSettings,
+              child: Text("Wi-Fi",style: TextStyle(color: Color(0xFFE64D3D)),),
+            ),
+            SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: openMobileDataSettings,
+              child: Text("Mobile Data",style: TextStyle(color: Color(0xFFE64D3D)),),
+            ),
+          ],
+        ),
+      ),
+      barrierDismissible: false,
+    );
+  }
+
+  // Method to open Wi-Fi settings
+  void openWifiSettings() async {
+
+     AppSettings.openAppSettings(type: AppSettingsType.wifi);
+    // if (await canLaunch('wifi-settings:')) {
+    //   await AppSettings.openAppSettings(type: AppSettingsType.wifi);
+    // } else {
+    //   throw 'Could not open Wi-Fi settings.';
+    // }
+  }
+
+  // Method to open Mobile Data settings
+  void openMobileDataSettings() async {
+
+    await AppSettings.openAppSettings(type: AppSettingsType.dataRoaming);
+    // if (await canLaunch('settings:')) {
+    //   // await launch('settings:');
+    //   await AppSettings.openAppSettings(type: AppSettingsType.settings);
+    // } else {
+    //   throw 'Could not open mobile data settings.';
+    // }
+  }
+
+  //
+  // Future<void> checkConnectionAndShowDialog() async {
+  //   final connectivityResult = await Connectivity().checkConnectivity();
+  //   if (connectivityResult == ConnectivityResult.none) {
+  //     showNoConnectionDialog();
+  //   }
+  // }
+  //
+  // void showNoConnectionDialog() {
+  //   Get.dialog(
+  //     AlertDialog(
+  //       title: Text("No Internet Connection"),
+  //       content: Text("Please enable internet to continue."),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () async {
+  //             await openAppSettings(); // Opens the app settings screen
+  //             Get.back(); // Close the dialog
+  //           },
+  //           child: Text("Open Settings"),
+  //         ),
+  //       ],
+  //     ),
+  //     barrierDismissible: false,
+  //   );
+  // }
   @override
-  void onReady(){
+  void onReady() {
+    checkInternetConnection();
     loadAds();
-    ListenToAppStateChanges();
+    listenToAppStateChanges();
     super.onReady();
   }
 
+  void loadAds() {
+    adsHelper.loadAppOpenAd();
+    adsHelper?.loadInterstitialAd();
+    //adsHelper.loadNativeAd();
+  }
 
-  void loadAds(){
-//  adsHelper.loadBannerAd();
-  adsHelper.loadAppOpenAd();
-  adsHelper?.loadInterstitialAd();
-}
-
-
-  void ListenToAppStateChanges(){
+  void listenToAppStateChanges() {
     AppStateEventNotifier.startListening();
-    AppStateEventNotifier.appStateStream.forEach((state)=>OnAppStateChanged(state));
+    AppStateEventNotifier.appStateStream
+        .forEach((state) => onAppStateChanged(state));
   }
 
-  void OnAppStateChanged(AppState appState){
-    if(appState == AppState.foreground){
-      if(adsHelper.appOpenAd!= null){
+  void onAppStateChanged(AppState appState) {
+    if (appState == AppState.foreground) {
+      if (adsHelper.appOpenAd != null) {
         adsHelper.showAppOpenAd();
-      }else{
+
+        print("---------------1");
+        print(appState);
+        print("---------------1");
+      } else {
         adsHelper.loadAppOpenAd();
+        print("---------------2");
+        print(appState);
+        print("---------------2");
       }
-    }else{
+    } else {
       adsHelper.loadAppOpenAd();
+      print("---------------3");
+      print(appState);
+      print("---------------3");
     }
-
   }
-
-
   @override
   void onInit() {
     textEditingController = TextEditingController();
     initSpeech();
-    focusNode.addListener((){
+    focusNode.addListener(() {
       update();
     });
+   // checkConnectionAndShowDialog();
     super.onInit();
   }
 
-  void initSpeech()async{
+  void initSpeech() async {
     speechEnabled.value = await speechToText.initialize();
     update();
   }
 
-  void startListening()async{
+  void startListening() async {
     await speechToText.listen(onResult: onSpeechResult);
   }
 
-  void stopListening()async{
+  void stopListening() async {
     await speechToText.stop();
   }
 
-  void onSpeechResult(SpeechRecognitionResult result){
+  void onSpeechResult(SpeechRecognitionResult result) {
     lastWords.value = result.recognizedWords;
     textEditingController.text = lastWords.value;
     // var words = result.recognizedWords.trim().split('');
@@ -116,34 +276,20 @@ class HomeScreenController extends GetxController {
 
   void updateTextField(String newText) {
     //textFieldText.value = newText;
-   //return textEditingController.text = newText;
-     currentText.value = newText;
-     textEditingController.text = newText;
-
+    //return textEditingController.text = newText;
+    currentText.value = newText;
+    textEditingController.text = newText;
   }
-  void onClose(){
+
+  void onClose() {
     // adsHelper.bannerAd?.dispose();
     //adsHelper.nativeAd?.dispose();
     focusNode.dispose();
     textEditingController.dispose();
+    //scrollController.dispose();
+    adsHelper.nativeAd?.dispose();
   }
 
-  // Future<void> fetchSuggestions(String query) async {
-  //   if (query.isEmpty) {
-  //     suggestions.clear();
-  //     return;
-  //   }
-  //   suggestions.value = await ApiServices.getSuggestions(query);
-  // }
-
-
-  // searchContain(String word) async {
-  //   try {
-  //     dictionaryModel = await ApiServices.getData(word);
-  //   } catch (e) {
-  //     dictionaryModel = null;
-  //   }
-  //
   ///searchContain
   // Future<void> searchContain(String word, String targetLanguage) async {
   //   try {
@@ -189,6 +335,7 @@ class HomeScreenController extends GetxController {
   // }
 
   Future<void> searchContain(String word, String targetLanguage) async {
+    currentText.value = word;
     try {
       isLoading.value = true;
       update();
@@ -196,21 +343,33 @@ class HomeScreenController extends GetxController {
       dictionaryModel = await ApiServices.getData(word);
 
       if (dictionaryModel != null) {
-        // Translate definitions in parallel
         await Future.wait(dictionaryModel!.meanings!.expand((meaning) {
           return meaning.definitions.map((definition) async {
             definition.definition =
-            await translateText(definition.definition, targetLanguage);
+                await translateText(definition.definition, targetLanguage);
           });
         }).toList());
-
-        // Translate synonyms and antonyms in parallel
+        await Future.wait(dictionaryModel!.meanings!.expand((meaning) {
+          return meaning.definitions.map((definition) async {
+            definition.example =
+                await translateText(definition.definition, targetLanguage);
+          });
+        }).toList());
+        await Future.wait(dictionaryModel!.phonetics!.map((phonetic) async {
+          if (phonetic.text != null) {
+            phonetic.text = await translateText(phonetic.text!, targetLanguage);
+          }
+        }));
+        dictionaryModel?.word =
+            await translateText(dictionaryModel!.word, targetLanguage);
         await Future.wait(dictionaryModel!.meanings!.expand((meaning) {
           return [
-            translateList(meaning.synonyms ?? [], targetLanguage).then((translatedList) {
+            translateList(meaning.synonyms ?? [], targetLanguage)
+                .then((translatedList) {
               meaning.synonyms = translatedList;
             }),
-            translateList(meaning.antonyms ?? [], targetLanguage).then((translatedList) {
+            translateList(meaning.antonyms ?? [], targetLanguage)
+                .then((translatedList) {
               meaning.antonyms = translatedList;
             }),
           ];
@@ -223,7 +382,6 @@ class HomeScreenController extends GetxController {
       update();
     }
   }
-
 
   Future<String> translateText(String text, String targetLanguage) async {
     final translator = GoogleTranslator();
@@ -249,132 +407,95 @@ class HomeScreenController extends GetxController {
     return translatedList;
   }
 
-
   showMeaning(Meaning meaning) {
     String wordDefinition = "";
     // for (var element in meaning.definitions) {
     //   int index = meaning.definitions.indexOf(element);
     //   wordDefinition += "\n${index + 1}.${element.definition}\n";
     // }
-
+    String _capitalizeFirstLetter(String text) {
+      if (text == null || text.isEmpty) {
+        return text;
+      }
+      return text[0].toUpperCase() + text.substring(1);
+    }
     for (int index = 0; index < meaning.definitions.length; index++) {
       var element = meaning.definitions[index];
       wordDefinition += "\n${index + 1}. ${element.definition}\n";
     }
-    return
-    //   Padding(
-    //   padding: const EdgeInsets.symmetric(
-    //     vertical: 10,
-    //   ),
-    //   child: Container(
-    //     decoration: BoxDecoration(
-    //       borderRadius: BorderRadius.circular(20.r),
-    //       color: Colors.white.withOpacity(0.55),
-    //       boxShadow: [
-    //         BoxShadow(
-    //           color: Colors.grey.withOpacity(0.2),
-    //           spreadRadius: 5,
-    //           blurRadius: 7,
-    //           offset: Offset(0, 3), // changes position of shadow
-    //         ),
-    //       ],
-    //     ),
-    //     padding: EdgeInsets.symmetric(horizontal: 10.0.w, vertical: 10.h),
-    //     margin: EdgeInsets.symmetric(
-    //       horizontal: 15.w,
-    //     ),
-    //     child: Material(
-    //       elevation: 2,
-    //       color: Color(0xFFEFEFEF),
-    //       borderRadius: BorderRadius.circular(20),
-    //       child: Padding(
-    //         padding: const EdgeInsets.all(10.0),
-    //         child: Column(
-    //           crossAxisAlignment: CrossAxisAlignment.start,
-    //           children: [
-    //             Text(
-    //               meaning.partOfSpeech,
-    //               style: TextStyle(
-    //                 fontWeight: FontWeight.bold,
-    //                 fontSize: 22,
-    //                 color: Colors.grey,
-    //               ),
-    //             ),
-    //             SizedBox(height: 10),
-    //             Text(
-    //               "Definations : ",
-    //               style: TextStyle(
-    //                 fontWeight: FontWeight.bold,
-    //                 fontSize: 18,
-    //                 color: Colors.black,
-    //               ),
-    //             ),
-    //             Text(
-    //               wordDefinition,
-    //               style: const TextStyle(
-    //                 fontSize: 16,
-    //                 height: 1,
-    //               ),
-    //             ),
-    //             wordRelation("Synonyms", meaning.synonyms),
-    //             wordRelation("Antonyms", meaning.antonyms),
-    //           ],
-    //         ),
-    //       ),
-    //     ),
-    //   ),
-    // );
-      Column(
-        children: [
-          Divider(height: 40.h,),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 10.0.w,),
-                margin: EdgeInsets.symmetric(
-                  horizontal: 10.w,
-                ),
+    return Column(
+      children: [
+        Divider(
+          height: 40.h,
+        ),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: Get.width * 0.028),
+          margin: EdgeInsets.symmetric(
+            horizontal: 10.w,
+          ),
 
-            color: Color(0xFFEFEFEF),
-            //borderRadius: BorderRadius.circular(20),
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    meaning.partOfSpeech,
-                    style:  TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 22.sp,
-                      color: Colors.grey,
-                        fontFamily: 'arial'
-                    ),
-                  ),
-                  SizedBox(height: 10.h),
-                  Text(
-                    "Definitions : ",
-                    style: TextStyle(
+          color: Color(0xFFEFEFEF),
+          //borderRadius: BorderRadius.circular(20),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Text(
+                //   meaning.partOfSpeech,
+                //   style: TextStyle(
+                //       fontWeight: FontWeight.bold,
+                //       fontSize: 22.sp,
+                //       color: Colors.black,
+                //       fontFamily: 'arial'),
+                // ),
+            RichText(
+            text: TextSpan(
+            children: [
+                TextSpan(
+                text: _capitalizeFirstLetter(meaning.partOfSpeech.split(' ').first) + ' ',
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 18,
+            color: Colors.black,
+            fontFamily: 'arial',
+          ),
+        ),
+        // TextSpan(
+        //   text: meaning.partOfSpeech.substring(meaning.partOfSpeech.indexOf(' ') + 1),
+        //   style: TextStyle(
+        //     fontWeight: FontWeight.bold,
+        //     fontSize: 22.sp,
+        //     color: Colors.black,
+        //     fontFamily: 'arial',
+        //   ),
+        // ),
+      ],
+    ),
+    ),
+
+                SizedBox(height: 10.h),
+                Text(
+                  "Definitions : ",
+                  style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18.sp,
-                      color: Colors.black,
-                        fontFamily: 'arial'
-                    ),
-                  ),
-                  Text(
-                    wordDefinition,
-                    style:  TextStyle(
-                      fontSize: 16.sp,
-                      height: 1.h,
-                        fontFamily: 'arial'
-                    ),
-                  ),
-                  wordRelation("Synonyms", meaning.synonyms),
-                  wordRelation("Antonyms", meaning.antonyms),
-                ],
-              ),
+                      color: Colors.grey,
+                      fontFamily: 'arial'),
+                ),
+                Text(
+                  wordDefinition,
+                  style: TextStyle(
+                      fontSize: 16.sp, height: 1.h, fontFamily: 'arial'),
+                ),
+                wordRelation("Synonyms", meaning.synonyms),
+                wordRelation("Antonyms", meaning.antonyms),
+              ],
             ),
           ),
-        ],
-      );
+        ),
+      ],
+    );
   }
 
   wordRelation(String title, List<String>? setList) {
@@ -385,14 +506,11 @@ class HomeScreenController extends GetxController {
           Text(
             "$title : ",
             style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-                fontFamily: 'arial'
-            ),
+                fontWeight: FontWeight.bold, fontSize: 18, fontFamily: 'arial'),
           ),
           Text(
             setList!.toSet().toString().replaceAll("{", "").replaceAll("}", ""),
-            style: const TextStyle(fontSize: 18,fontFamily: 'arial'),
+            style: const TextStyle(fontSize: 18, fontFamily: 'arial'),
           ),
           const SizedBox(height: 10),
         ],

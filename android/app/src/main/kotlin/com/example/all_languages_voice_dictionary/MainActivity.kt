@@ -1,4 +1,4 @@
-package com.example.all_languages_voice_dictionary
+package com.pzapps.alllanguagesdictionary
 
 import io.flutter.embedding.android.FlutterActivity
 

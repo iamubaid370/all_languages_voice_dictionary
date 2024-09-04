@@ -44,6 +44,14 @@ class DbHelper{
   )
   ''');
 
+    await db.execute('''
+  CREATE TABLE settings_table (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    key TEXT NOT NULL,
+    value TEXT NOT NULL
+  )
+  ''');
+
   }
 
   Future<HistoryModel> insertHistory(HistoryModel item)async{
@@ -52,7 +60,7 @@ class DbHelper{
     try {
       final id = await db.insert('history_table', item.toMap());
       print('Inserted item with ID: $id');
-      return HistoryModel(text: item.text);
+      return HistoryModel(text: item.text,id: id);
     } catch (e) {
       print('Error inserting history: $e');
       rethrow;
@@ -78,8 +86,8 @@ class DbHelper{
 
   Future<FavoritesModel> insertFavorites(FavoritesModel item)async{
     Database db = await dbInstance.database;
-    await db.insert('favorites_table', item.toMap());
-    return item;
+    final id = await db.insert('favorites_table', item.toMap());
+    return FavoritesModel(text: item.text,id: id);
 
   }
 
@@ -97,106 +105,36 @@ class DbHelper{
 
 
 
+  /// Insert or update the notification setting
+  Future<void> insertOrUpdateNotificationSetting(bool value) async {
+    Database db = await dbInstance.database;
+    await db.insert(
+      'settings_table',
+      {'key': 'notificationValue', 'value': value ? 'true' : 'false'},
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    print('data added to the db:$value');
+  }
+
+ /// Get the notification setting
+  Future<bool> getNotificationSetting() async {
+    Database db = await dbInstance.database;
+    final result = await db.query(
+      'settings_table',
+      where: 'key = ?',
+      whereArgs: ['notificationValue'],
+    );
+
+    if (result.isNotEmpty) {
+      return result.first['value'] == 'true';
+    } else {
+      return false;
+    }
+  }
+
+
+
+
 }
 
-///imported data
 
-// import 'package:sqflite/sqflite.dart';
-// import 'package:path/path.dart';
-// import '../model/history_model.dart';
-//
-// class DatabaseHelper {
-//   static final DatabaseHelper instance = DatabaseHelper._init();
-//
-//   static Database? _database;
-//
-//   DatabaseHelper._init();
-//
-//   Future<Database> get database async {
-//     if (_database != null) return _database!;
-//
-//     _database = await _initDB('history.db');
-//     return _database!;
-//   }
-//
-//   Future<Database> _initDB(String filePath) async {
-//     final dbPath = await getDatabasesPath();
-//     final path = join(dbPath, filePath);
-//
-//     return await openDatabase(path, version: 1, onCreate: _createDB);
-//   }
-//
-//   Future _createDB(Database db, int version) async {
-//     const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
-//     const textType = 'TEXT NOT NULL';
-//
-//     await db.execute('''
-//     CREATE TABLE $tableHistory (
-//       ${HistoryFields.id} $idType,
-//       ${HistoryFields.text} $textType
-//       )
-//     ''');
-//   }
-//
-//   Future<HistoryItem> create(HistoryItem item) async {
-//     final db = await instance.database;
-//
-//     final id = await db.insert(tableHistory, item.toMap());
-//     return item.copy(id: id);
-//   }
-//
-//   Future<HistoryItem?> readHistoryItem(int id) async {
-//     final db = await instance.database;
-//
-//     final maps = await db.query(
-//       tableHistory,
-//       columns: HistoryFields.values,
-//       where: '${HistoryFields.id} = ?',
-//       whereArgs: [id],
-//     );
-//
-//     if (maps.isNotEmpty) {
-//       return HistoryItem.fromMap(maps.first);
-//     } else {
-//       return null;
-//     }
-//   }
-//
-//   Future<List<HistoryItem>> readAllHistoryItems() async {
-//     final db = await instance.database;
-//
-//     const orderBy = '${HistoryFields.id} ASC';
-//     final result = await db.query(tableHistory, orderBy: orderBy);
-//
-//     return result.map((json) => HistoryItem.fromMap(json)).toList();
-//   }
-//
-//   Future<int> update(HistoryItem item) async {
-//     final db = await instance.database;
-//
-//     return db.update(
-//       tableHistory,
-//       item.toMap(),
-//       where: '${HistoryFields.id} = ?',
-//       whereArgs: [item.id],
-//     );
-//   }
-//
-//   Future<int> delete(int id) async {
-//     final db = await instance.database;
-//
-//     return await db.delete(
-//       tableHistory,
-//       where: '${HistoryFields.id} = ?',
-//       whereArgs: [id],
-//     );
-//   }
-//
-//   Future close() async {
-//     final db = await instance.database;
-//
-//     db.close();
-//   }
-// }
-//
-// const String tableHistory = 'history';

@@ -19,16 +19,15 @@ class HistoryScreenController extends GetxController{
 
   @override
   void onReady(){
-    adsHelper.loadNativeAd();
+    //adsHelper.loadNativeAd();
     loadHistory();
     print('Native Add loaded');
     super.onReady();
   }
-
   @override
   void onInit() {
-  //  adsHelper.loadNativeAd();
     super.onInit();
+    loadAd();
 
   }
 
@@ -39,6 +38,11 @@ class HistoryScreenController extends GetxController{
     super.onClose();
   }
 
+  void loadAd(){
+    adsHelper.loadBannerAd();
+  }
+
+
   // @override
   // void onReady() {
   //  adsHelper.loadNativeAd();
@@ -48,15 +52,16 @@ class HistoryScreenController extends GetxController{
 
 
   void addToHistory(String word) async {
+
     // if(!historyList.contains(word)){
     //   historyList.add(word);
     // }
 
     HistoryModel newItem = HistoryModel(text: word,);
     //await DbHelper.dbInstance.insertHistory(newItem);
-    await historyRepository.insertData(newItem);
+    HistoryModel insertedItem = await historyRepository.insertData(newItem);
     if (!historyList.any((item) => item.text == word)) {
-      historyList.add(newItem);
+      historyList.add(insertedItem);
     }
     update();
   }

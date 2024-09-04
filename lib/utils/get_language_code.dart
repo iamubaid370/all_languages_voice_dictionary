@@ -27,8 +27,8 @@ String? getLanguageCode(String? language) {
       return 'ur';
     case 'Pashto':
       return 'ps';
-    case 'Portuguese (PT)':
-      return 'pt_PT';
+    case 'Portuguese':
+      return 'pt';
     case 'Portuguese (BR)':
       return 'pt_BR';
     case 'Chinese (Simplified)':
@@ -94,5 +94,7 @@ String? getLanguageCode(String? language) {
   }
   return null;
 }
+
+
 
 
