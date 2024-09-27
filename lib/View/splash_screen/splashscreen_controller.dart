@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:all_languages_voice_dictionary/View/home_screen/homescreen_controller.dart';
 import 'package:all_languages_voice_dictionary/ads/adshelper.dart';
+import 'package:all_languages_voice_dictionary/fireBase/remoteConfig/remoteConfigServices.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,8 +25,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 //   }
 // }
 
-
 import '../../database/db_helper.dart';
+import '../../fireBase/remoteConfig/remoteConfigKeys.dart';
+import '../../global/global_variables.dart';
 import '../../services/notification.dart'; // Update this import to your DbHelper class
 
 class SplashController extends GetxController {
@@ -33,22 +37,35 @@ class SplashController extends GetxController {
   RxDouble progressValue = 0.0.obs;
   RxBool showProgressBar = true.obs;
 
+
+  final remoteConfig =  FirebaseRemoteConfig.instance;
+
   @override
-  void onReady() {
+  Future<void> onReady() async {
     super.onReady();
     checkNotificationSetting();
     startLoading();
 
+
+
+    ///Get Remote Config
+     FirebaseRemoteConfigService().fetchAndActivate();
+
+
+    if (Platform.isAndroid) {
+      await getAllTheValesOfRemoteConfigAndroid();
+      await getAllTheValesOfRemoteConfigAndroid_update();
+      print("PLAT FORM IS ANDROID +_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_");
+     }
   }
+
   @override
   void onInit() {
     // TODO: implement onInit
     adsHelper.loadAppOpenAd();
     adsHelper.loadBannerAd();
     super.onInit();
-
   }
-
 
   void checkNotificationSetting() async {
     bool res = await DbHelper.dbInstance.getNotificationSetting();
@@ -60,6 +77,7 @@ class SplashController extends GetxController {
       /// If the value is true, continue with periodic notifications
       showLocalNotificationPeriodically();
     }
+
     /// If the value is false, do nothing (notifications are disabled)
   }
 
@@ -71,7 +89,7 @@ class SplashController extends GetxController {
 
     if (seenLanguageSelection) {
       if (seenOnboarding) {
-        Get.offNamed('/home');
+        Get.offNamed('/welcome');
         print(seenOnboarding);
       } else {
         Get.offNamed('/onBoardingScreen');
@@ -97,9 +115,8 @@ class SplashController extends GetxController {
   //
   // }
 
-
   void startLoading() {
-    const totalDuration = Duration(seconds: 4); // Adjust the duration as needed
+    const totalDuration = Duration(seconds: 5); // Adjust the duration as needed
     const updateFrequency = Duration(milliseconds: 100);
     final totalSteps =
         totalDuration.inMilliseconds ~/ updateFrequency.inMilliseconds;
@@ -113,12 +130,81 @@ class SplashController extends GetxController {
         showProgressBar.value = false;
         adsHelper.showAppOpenAd();
         _checkLanguageSelectionStatus();
-
-
       } else {
         progressValue.value = (currentStep / totalSteps) * 100;
         currentStep++;
       }
     });
   }
+
+
+
+
+
+
+  Future<void> getAllTheValesOfRemoteConfigAndroid() async {
+    try {
+      FirebaseRemoteConfigService remoteConfigService =
+          FirebaseRemoteConfigService();
+
+      await remoteConfigService.fetchAndActivate();
+
+      ///Collapsible Banner Ad Remote Config
+      ///
+      ///
+      GlobalVariable.instatitalRemoteConfig.value = remoteConfigService.getBool(RemoteConfigKeys.interstitialAdKey);
+      GlobalVariable.nativeAdRemoteConfig.value = remoteConfigService.getBool(RemoteConfigKeys.nativeAdKey);
+      GlobalVariable.isAdShowRemoteConfig.value = remoteConfigService.getBool(RemoteConfigKeys.showAds);
+
+
+      print("++++++++++++++++++++++++++++++++++++");
+
+      print(
+          "Text to Speech Screen Banner: ${GlobalVariable.instatitalRemoteConfig.value}\n"
+          "Remote Config nativeAdRemoteConfig String is: ${GlobalVariable.nativeAdRemoteConfig.value}\n"
+          "IS NATIVE AD SHOW value IS: ${GlobalVariable.isAdShowRemoteConfig.value}");
+    } catch (e) {
+      print("Exception Of getAllTheValesOfRemoteConfig${e.toString()}");
+    }
+  }
+
+
+
+  Future<void> getAllTheValesOfRemoteConfigAndroid_update() async {
+
+
+    try {
+      FirebaseRemoteConfigService remoteConfigService =
+      FirebaseRemoteConfigService();
+
+
+      remoteConfig.onConfigUpdated.listen((event) async {
+        await remoteConfig.activate();
+
+        await remoteConfigService.fetchAndActivate();
+
+        ///Collapsible Banner Ad Remote Config
+        ///
+        ///
+        GlobalVariable.instatitalRemoteConfig.value = remoteConfigService.getBool(RemoteConfigKeys.interstitialAdKey);
+        GlobalVariable.nativeAdRemoteConfig.value = remoteConfigService.getBool(RemoteConfigKeys.nativeAdKey);
+        GlobalVariable.isAdShowRemoteConfig.value = remoteConfigService.getBool(RemoteConfigKeys.showAds);
+
+
+        print("++++++++++++++++++++++++++++++++++++");
+
+        print(
+            " After Update  ::Text to Speech Screen Banner: ${GlobalVariable.instatitalRemoteConfig.value}\n"
+                " After Update ::    Remote Config nativeAdRemoteConfig String is: ${GlobalVariable.nativeAdRemoteConfig.value}\n"
+                "After Update :: IS NATIVE AD SHOW value IS: ${GlobalVariable.isAdShowRemoteConfig.value}");
+      }
+      );
+
+    } catch (e) {
+      print("Exception Of getAllTheValesOfRemoteConfig${e.toString()}");
+    }
+  }
+
+
+
 }

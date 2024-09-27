@@ -2,12 +2,11 @@ import 'dart:async';
 
 import 'package:all_languages_voice_dictionary/View/favourite_screen/favourite_controller.dart';
 import 'package:all_languages_voice_dictionary/ads/adshelper.dart';
+import 'package:all_languages_voice_dictionary/global/global_variables.dart';
 import 'package:all_languages_voice_dictionary/model/dictionary_model.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -42,32 +41,6 @@ class HomeScreenController extends GetxController {
   AdsHelper adsHelper = AdsHelper();
   FocusNode focusNode = FocusNode();
 
-  // Future connectionStatus()async{
-  //   final connectivityResult = await Connectivity().checkConnectivity();
-  //   if(connectivityResult==ConnectivityResult.none){
-  //       Get.dialog(
-  //         AlertDialog(
-  //           title: Text("No Internet Connection"),
-  //           content: Text("Please enable internet to continue."),
-  //           actions: [
-  //             TextButton(
-  //               onPressed: () async {
-  //                 await openAppSettings();
-  //                 Get.back(); // Close the dialog
-  //               },
-  //               child: Text("Open Settings"),
-  //             ),
-  //           ],
-  //         ),
-  //         barrierDismissible: false,
-  //       );
-  //   }
-  //
-  // }
-
-
-
-
   ///INTERNET CONNECTION DIALOG
   ///
   RxBool isConnected = true.obs;
@@ -88,7 +61,6 @@ class HomeScreenController extends GetxController {
     }
   }
 
-  // Method to show no internet dialog
   void showNoInternetDialog() {
     Get.dialog(
       AlertDialog(
@@ -102,7 +74,10 @@ class HomeScreenController extends GetxController {
           children: [
             Container(), // empty space to push the cross button to the right
             IconButton(
-              icon: Icon(Icons.close,color: Colors.white,),
+              icon: Icon(
+                Icons.close,
+                color: Colors.white,
+              ),
               onPressed: () {
                 Get.back();
               },
@@ -125,12 +100,18 @@ class HomeScreenController extends GetxController {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: openWifiSettings,
-              child: Text("Wi-Fi",style: TextStyle(color: Color(0xFFE64D3D)),),
+              child: Text(
+                "Wi-Fi",
+                style: TextStyle(color: Color(0xFFE64D3D)),
+              ),
             ),
             SizedBox(height: 10),
             ElevatedButton(
               onPressed: openMobileDataSettings,
-              child: Text("Mobile Data",style: TextStyle(color: Color(0xFFE64D3D)),),
+              child: Text(
+                "Mobile Data",
+                style: TextStyle(color: Color(0xFFE64D3D)),
+              ),
             ),
           ],
         ),
@@ -139,66 +120,47 @@ class HomeScreenController extends GetxController {
     );
   }
 
-  // Method to open Wi-Fi settings
   void openWifiSettings() async {
-
-     AppSettings.openAppSettings(type: AppSettingsType.wifi);
-    // if (await canLaunch('wifi-settings:')) {
-    //   await AppSettings.openAppSettings(type: AppSettingsType.wifi);
-    // } else {
-    //   throw 'Could not open Wi-Fi settings.';
-    // }
+    AppSettings.openAppSettings(type: AppSettingsType.wifi);
   }
 
   // Method to open Mobile Data settings
   void openMobileDataSettings() async {
-
     await AppSettings.openAppSettings(type: AppSettingsType.dataRoaming);
-    // if (await canLaunch('settings:')) {
-    //   // await launch('settings:');
-    //   await AppSettings.openAppSettings(type: AppSettingsType.settings);
-    // } else {
-    //   throw 'Could not open mobile data settings.';
-    // }
   }
 
-  //
-  // Future<void> checkConnectionAndShowDialog() async {
-  //   final connectivityResult = await Connectivity().checkConnectivity();
-  //   if (connectivityResult == ConnectivityResult.none) {
-  //     showNoConnectionDialog();
-  //   }
-  // }
-  //
-  // void showNoConnectionDialog() {
-  //   Get.dialog(
-  //     AlertDialog(
-  //       title: Text("No Internet Connection"),
-  //       content: Text("Please enable internet to continue."),
-  //       actions: [
-  //         TextButton(
-  //           onPressed: () async {
-  //             await openAppSettings(); // Opens the app settings screen
-  //             Get.back(); // Close the dialog
-  //           },
-  //           child: Text("Open Settings"),
-  //         ),
-  //       ],
-  //     ),
-  //     barrierDismissible: false,
-  //   );
-  // }
+  void onInit() {
+    loadAds();
+    textEditingController = TextEditingController();
+    initSpeech();
+    focusNode.addListener(() {
+      update();
+    });
+    super.onInit();
+  }
+
   @override
   void onReady() {
     checkInternetConnection();
-    loadAds();
     listenToAppStateChanges();
+    if (adsHelper.interstitialAd != null) {
+      adsHelper.showInterstitialAd(nextScreen: '/home');
+      print('Interstitial ad loaded successfully.');
+    }
     super.onReady();
   }
 
+
+
+
   void loadAds() {
+    //
+    // if(GlobalVariable.instatitalRemoteConfig.value == true){
+    //
+    // }
+
     adsHelper.loadAppOpenAd();
-    adsHelper?.loadInterstitialAd();
+    // adsHelper?.loadInterstitialAd();
     //adsHelper.loadNativeAd();
   }
 
@@ -229,17 +191,8 @@ class HomeScreenController extends GetxController {
       print("---------------3");
     }
   }
-  @override
-  void onInit() {
-    textEditingController = TextEditingController();
-    initSpeech();
-    focusNode.addListener(() {
-      update();
-    });
-   // checkConnectionAndShowDialog();
-    super.onInit();
-  }
 
+  @override
   void initSpeech() async {
     speechEnabled.value = await speechToText.initialize();
     update();
@@ -256,22 +209,6 @@ class HomeScreenController extends GetxController {
   void onSpeechResult(SpeechRecognitionResult result) {
     lastWords.value = result.recognizedWords;
     textEditingController.text = lastWords.value;
-    // var words = result.recognizedWords.trim().split('');
-    // if(words.length == 1){
-    //   lastWords.value = words[0];
-    //   print('@@@@@@@@@@@@@@@@@@@2');
-    //   print('@@@@@@@@@@@@@@@@@@@2');
-    //   print('@@@@@@@@@@@@@@@@@@@2');
-    //   print('@@@@@@@@@@@@@@@@@@@2');
-    //   print("$words[0]");
-    //   print('@@@@@@@@@@@@@@@@@@@2');
-    //   print('@@@@@@@@@@@@@@@@@@@2');
-    //   print('@@@@@@@@@@@@@@@@@@@2');
-    //
-    //   textEditingController.text = lastWords.value;
-    //   stopListening();
-    //
-    // }
   }
 
   void updateTextField(String newText) {
@@ -419,6 +356,7 @@ class HomeScreenController extends GetxController {
       }
       return text[0].toUpperCase() + text.substring(1);
     }
+
     for (int index = 0; index < meaning.definitions.length; index++) {
       var element = meaning.definitions[index];
       wordDefinition += "\n${index + 1}. ${element.definition}\n";
@@ -449,30 +387,32 @@ class HomeScreenController extends GetxController {
                 //       color: Colors.black,
                 //       fontFamily: 'arial'),
                 // ),
-            RichText(
-            text: TextSpan(
-            children: [
-                TextSpan(
-                text: _capitalizeFirstLetter(meaning.partOfSpeech.split(' ').first) + ' ',
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 18,
-            color: Colors.black,
-            fontFamily: 'arial',
-          ),
-        ),
-        // TextSpan(
-        //   text: meaning.partOfSpeech.substring(meaning.partOfSpeech.indexOf(' ') + 1),
-        //   style: TextStyle(
-        //     fontWeight: FontWeight.bold,
-        //     fontSize: 22.sp,
-        //     color: Colors.black,
-        //     fontFamily: 'arial',
-        //   ),
-        // ),
-      ],
-    ),
-    ),
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: _capitalizeFirstLetter(
+                                meaning.partOfSpeech.split(' ').first) +
+                            ' ',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 18,
+                          color: Colors.black,
+                          fontFamily: 'arial',
+                        ),
+                      ),
+                      // TextSpan(
+                      //   text: meaning.partOfSpeech.substring(meaning.partOfSpeech.indexOf(' ') + 1),
+                      //   style: TextStyle(
+                      //     fontWeight: FontWeight.bold,
+                      //     fontSize: 22.sp,
+                      //     color: Colors.black,
+                      //     fontFamily: 'arial',
+                      //   ),
+                      // ),
+                    ],
+                  ),
+                ),
 
                 SizedBox(height: 10.h),
                 Text(

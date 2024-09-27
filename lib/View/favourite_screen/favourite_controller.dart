@@ -9,12 +9,11 @@ import '../../database/db_helper.dart';
 import '../home_screen/homescreen_controller.dart';
 
 class FavouriteController extends GetxController {
-  //HomeScreenController homeScreenController = Get.put(HomeScreenController());
   AdsHelper adsHelper = AdsHelper();
   var favouritesList = <FavoritesModel>[].obs;
   var historyList = [].obs;
-  bool isFavourite(String text){
-    return favouritesList.any((item)=>item.text==text);
+  bool isFavourite(String text) {
+    return favouritesList.any((item) => item.text == text);
   }
 
   FavoritesRepository favoritesRepository = FavoritesRepository();
@@ -26,46 +25,32 @@ class FavouriteController extends GetxController {
     super.onInit();
   }
 
-  void loadAd(){
+  void loadAd() {
     adsHelper.loadBannerAd();
   }
 
   Future<void> addToFavourites(String word) async {
-    // if(!favouritesList.contains(word)){
-    //   favouritesList.add(word);
-
     FavoritesModel newItem = FavoritesModel(text: word);
-    FavoritesModel insertedItem = await DbHelper.dbInstance.insertFavorites(newItem);
+    FavoritesModel insertedItem =
+        await DbHelper.dbInstance.insertFavorites(newItem);
     favouritesList.add(insertedItem);
   }
 
-
   Future<void> deleteFromFavourite(String word) async {
-    // if(favouritesList.contains(word)){
-    //   favouritesList.remove(word);
-    //
-    // }
-    // await DbHelper.dbInstance.deleteFavorites(word);
-    // favouritesList.removeWhere((item) {
-    //   return item.id == id;
-    // });
-
-    var itemToRemove = await favouritesList.firstWhere((item) => item.text == word,
-        //orElse: () => null
+    var itemToRemove = await favouritesList.firstWhere(
+      (item) => item.text == word,
+      //orElse: () => null
     );
 
     if (itemToRemove != null) {
       await favoritesRepository.deleteFavorites(itemToRemove);
-   await   favouritesList.remove(itemToRemove);
+      await favouritesList.remove(itemToRemove);
     }
     print('data deleted');
   }
 
-  Future<void> loadFavorites()async{
+  Future<void> loadFavorites() async {
     final fetchedFavoritesList = await favoritesRepository.getFavorites();
     favouritesList.assignAll(fetchedFavoritesList);
-
   }
-
-
 }

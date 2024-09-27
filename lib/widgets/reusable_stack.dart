@@ -62,98 +62,99 @@ Widget reusableStack1({
   required String title,
   required VoidCallback onTap,
 }) {
-  return InkWell(
-    onTap: onTap,
-    child: Stack(
-      children: [
-        Container(
-          height: Get.height * 0.17.h,
-          width: Get.width * 0.27.w,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
+  return GestureDetector(
+      onTap: onTap,
+      child: Stack(
+        children: [
+          Container(
+            height: Get.height * 0.17.h,
+            width: Get.width * 0.27.w,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            // child: Center(
+            //   child: Image.asset(
+            //     image,
+            //     fit: BoxFit.cover,
+            //      height: 50,
+            //      width: 55,
+            //   ),
+            // ),
           ),
-          // child: Center(
-          //   child: Image.asset(
-          //     image,
-          //     fit: BoxFit.cover,
-          //      height: 50,
-          //      width: 55,
-          //   ),
-          // ),
-        ),
-        Positioned(
-          child: Padding(
-            padding:  EdgeInsets.symmetric(vertical: 35,horizontal: 20),
-            child: Image.asset(
-            image,
-            fit: BoxFit.contain,
-            height: 50,
-            width: 55,
-                    ),
-          ),),
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12,vertical: 10),
-            child: Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Color(0xFFE64D3D),
-                fontFamily: 'Arial',
-                fontSize: 13,
+          Positioned(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 35, horizontal: 30),
+              child: Image.asset(
+                image,
+                fit: BoxFit.contain,
+                height: 50,
+                width: 55,
               ),
             ),
           ),
-        ),
-      ],
-    )
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Color(0xFFE64D3D),
+                  fontFamily: 'Arial',
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          ),
+        ],
+      )
 
-    // Stack(
-    //   children: [
-    //     Container(
-    //       height: Get.height * 0.17.h,
-    //       width: Get.width * 0.27.w,
-    //       decoration: BoxDecoration(
-    //         color: Colors.white,
-    //         borderRadius: BorderRadius.circular(10),
-    //       ),
-    //       child: Container(
-    //         margin: EdgeInsets.only(
-    //             left: Get.width * 0.07,
-    //             right: Get.width * 0.07,
-    //             bottom: Get.width * 0.1,
-    //             top: Get.width * 0.07),
-    //         padding: EdgeInsets.only(bottom: 5),
-    //         //color: Colors.blue,
-    //         alignment: Alignment.center,
-    //         height: 45,
-    //         width: 30,
-    //         child: Image.asset(
-    //           image,
-    //           // height: 44,
-    //           // width: 42,
-    //           //width: Get.width * 0.23,
-    //           fit: BoxFit.cover,
-    //         ),
-    //       ),
-    //       // Image.asset(
-    //       //   image,
-    //       //   fit: BoxFit.fitWidth,),
-    //     ),
-    //     Padding(
-    //       padding: EdgeInsets.only(top: Get.height * 0.1, left: 15),
-    //       child: Center(
-    //           child: Text(
-    //         title,
-    //         style: TextStyle(
-    //             color: Color(0xFFE64D3D), fontFamily: 'Arial', fontSize: 13),
-    //       )),
-    //     ),
-    //   ],
-    // ),
-  );
+      // Stack(
+      //   children: [
+      //     Container(
+      //       height: Get.height * 0.17.h,
+      //       width: Get.width * 0.27.w,
+      //       decoration: BoxDecoration(
+      //         color: Colors.white,
+      //         borderRadius: BorderRadius.circular(10),
+      //       ),
+      //       child: Container(
+      //         margin: EdgeInsets.only(
+      //             left: Get.width * 0.07,
+      //             right: Get.width * 0.07,
+      //             bottom: Get.width * 0.1,
+      //             top: Get.width * 0.07),
+      //         padding: EdgeInsets.only(bottom: 5),
+      //         //color: Colors.blue,
+      //         alignment: Alignment.center,
+      //         height: 45,
+      //         width: 30,
+      //         child: Image.asset(
+      //           image,
+      //           // height: 44,
+      //           // width: 42,
+      //           //width: Get.width * 0.23,
+      //           fit: BoxFit.cover,
+      //         ),
+      //       ),
+      //       // Image.asset(
+      //       //   image,
+      //       //   fit: BoxFit.fitWidth,),
+      //     ),
+      //     Padding(
+      //       padding: EdgeInsets.only(top: Get.height * 0.1, left: 15),
+      //       child: Center(
+      //           child: Text(
+      //         title,
+      //         style: TextStyle(
+      //             color: Color(0xFFE64D3D), fontFamily: 'Arial', fontSize: 13),
+      //       )),
+      //     ),
+      //   ],
+      // ),
+      );
 }

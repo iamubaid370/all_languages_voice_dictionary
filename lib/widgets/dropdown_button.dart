@@ -45,8 +45,8 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 
-Widget customDropDownButton(
-    RxString dropDownValue, Function(String?) onChanged, Color color,Color color2) {
+Widget customDropDownButton(RxString dropDownValue, Function(String?) onChanged,
+    Color color, Color color2) {
   // var languages = [
   //   'English',
   //   'Urdu',
@@ -119,7 +119,7 @@ Widget customDropDownButton(
           );
         }).toList(),
         onChanged: onChanged,
-        menuWidth: 135.w,
+        // menuWidth: 135.w,
 
         ///TODO
         borderRadius: BorderRadius.circular(8),

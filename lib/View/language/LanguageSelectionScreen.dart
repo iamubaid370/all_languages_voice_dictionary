@@ -1,128 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'package:get/get.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
-//
-// class LanguageSelectionScreen extends StatefulWidget {
-//   @override
-//   LanguageSelectionScreenState createState() => LanguageSelectionScreenState();
-// }
-//
-// class LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
-//   final List<Map<String, String>> languages = [
-//     {'name': 'English', 'flag': 'assets/flag.jpg'},
-//     {'name': 'Afrikaans', 'flag': 'assets/flag.jpg'},
-//     {'name': 'Arabic', 'flag': 'assets/flag.jpg'},
-//     {'name': 'Chines', 'flag': 'assets/icons/gps_logo.png'},
-//     {'name': 'Czech', 'flag': 'assets/icons/gps_logo.png'},
-//     {'name': 'Danish', 'flag': 'assets/icons/gps_logo.png'},
-//     {'name': 'Dutch', 'flag': 'assets/icons/gps_logo.png'},
-//     {'name': 'French', 'flag': 'assets/icons/gps_logo.png'},
-//     {'name': 'German', 'flag': 'assets/icons/gps_logo.png'},
-//     {'name': 'Greek', 'flag': 'assets/icons/gps_logo.png'},
-//     {'name': 'Hindi', 'flag': 'assets/icons/gps_logo.png'},
-//     {'name': 'Indonesian', 'flag': 'assets/icons/gps_logo.png'},
-//     {'name': 'Italian', 'flag': 'assets/icons/gps_logo.png'},
-//     {'name': 'Japanese', 'flag': 'assets/icons/gps_logo.png'},
-//     {'name': 'Korean', 'flag': 'assets/icons/gps_logo.png'},
-//     {'name': 'Malay', 'flag': 'assets/icons/gps_logo.png'},
-//     {'name': 'Norwegian', 'flag': 'assets/icons/gps_logo.png'},
-//     {'name': 'Persion', 'flag': 'assets/icons/gps_logo.png'},
-//     {'name': 'Portuguese', 'flag': 'assets/icons/gps_logo.png'},
-//     {'name': 'Russian', 'flag': 'assets/icons/gps_logo.png'},
-//     {'name': 'Spanish', 'flag': 'assets/icons/gps_logo.png'},
-//     {'name': 'Thai', 'flag': 'assets/icons/gps_logo.png'},
-//     {'name': 'Turkish', 'flag': 'assets/icons/gps_logo.png'},
-//     {'name': 'Urdu', 'flag': 'assets/icons/gps_logo.png'},
-//     {'name': 'Vietnamese', 'flag': 'assets/icons/gps_logo.png'},
-//   ];
-//
-//   String? _selectedLanguage;
-//
-//   void _selectLanguage(String language) async {
-//     setState(() {
-//       _selectedLanguage = language;
-//     });
-//     SharedPreferences prefs = await SharedPreferences.getInstance();
-//     await prefs.setString('selectedLanguage', language);
-//     await prefs.setBool('seenLanguageSelection', true);
-//     Get.updateLocale(Locale(languageCode));
-//   }
-//
-//
-//
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         // leading: IconButton(
-//         //   onPressed: () {
-//         //     Get.offNamed('/');
-//         //   },
-//         //   icon: Icon(Icons.arrow_back),
-//         // ),
-//         title: Text('Select Language',style:TextStyle(
-//           fontSize: 18,
-//           fontFamily: 'Arial',
-//           fontWeight: FontWeight.w800,
-//           color: Color(0xFFE64D3D),),),
-//         centerTitle: true,
-//         actions: [
-//           ElevatedButton(
-//               onPressed: _selectedLanguage != null
-//                   ? () {
-//                     () => Get.updateLocale(const Locale('ko', 'KR'));
-//                 Get.offNamed('/onBoardingScreen');
-//               }
-//                   : null,
-//               child: Text("Next")),
-//           SizedBox(
-//             width: 10,
-//           ),
-//         ],
-//       ),
-//       body: GridView.builder(
-//         padding: EdgeInsets.all(10),
-//         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-//           crossAxisCount: 2,
-//           mainAxisSpacing: 10,
-//           crossAxisSpacing: 10,
-//           childAspectRatio: 2 / 2, // Increase width and decrease height
-//         ),
-//         itemCount: languages.length,
-//         itemBuilder: (context, index) {
-//           bool isSelected = _selectedLanguage == languages[index]['name'];
-//           return GestureDetector(
-//             onTap: () => _selectLanguage(languages[index]['name']!),
-//             child: Card(
-//               color: isSelected ? Color(0xFFE64D3D) : Colors.white,
-//               shape: isSelected
-//                   ? RoundedRectangleBorder(
-//                 side: BorderSide(color: Colors.blue, width: 2),
-//                 borderRadius: BorderRadius.circular(8),
-//               )
-//                   : RoundedRectangleBorder(
-//                 borderRadius: BorderRadius.circular(8),
-//               ),
-//               child: Column(
-//                 mainAxisAlignment: MainAxisAlignment.center,
-//                 children: [
-//                   Image.asset(languages[index]['flag']!, width: 80, height: 80),
-//                   SizedBox(height: 6),
-//                   Text(
-//                     languages[index]['name']!,
-//                     style: TextStyle(fontSize: 18),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           );
-//         },
-//       ),
-//     );
-//   }
-// }
-
 import 'package:all_languages_voice_dictionary/View/language/languagescreen_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -144,17 +19,22 @@ class LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
   LanguageScreenController languageScreenController =
       Get.put(LanguageScreenController());
   String? _selectedLanguage;
-
+  RxBool isSelected = true.obs;
   void selectLanguage(String languageCode) async {
     setState(() {
       _selectedLanguage = languageCode;
     });
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('selectedLanguage', languageCode);
-    await prefs.setBool('seenLanguageSelection', true);
+  }
 
-    // Update the locale
-    Get.updateLocale(Locale(languageCode));
+  Future<void> saveLanguageSelection() async {
+    if (_selectedLanguage != null) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('selectedLanguage', _selectedLanguage!);
+      await prefs.setBool('seenLanguageSelection', true);
+
+      // Update the locale after saving
+      Get.updateLocale(Locale(_selectedLanguage!));
+    }
   }
 
   void _checkLanguageSelectionStatus() async {
@@ -165,7 +45,7 @@ class LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
 
     if (seenLanguageSelection) {
       if (seenOnboarding) {
-        Get.offNamed('/home');
+        Get.offNamed('/welcome');
         print(seenOnboarding);
       } else {
         Get.offNamed('/onBoardingScreen');
@@ -180,20 +60,25 @@ class LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
   void goNext() {
     //  adsHelper.showAppOpenAd();
     // Get.offNamed('/dash');
+    saveLanguageSelection();
     _checkLanguageSelectionStatus();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFE64D3D),
       appBar: AppBar(
         backgroundColor: Color(0xFFE64D3D),
-        // leading: IconButton(
-        //   onPressed: () {
-        //     Get.back();
-        //   },
-        //   icon: Icon(Icons.arrow_back),
-        // ),
+        leading: IconButton(
+          onPressed: () {
+            Get.back();
+          },
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+        ),
         title: Text(
           'Select Language',
           style: TextStyle(
@@ -211,13 +96,13 @@ class LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                     goNext();
                   }
                 : null,
-            child: Text("Save"),
+            child: Text("Save",style: TextStyle(color: isSelected.value?Colors.white:Color(0xFFE64D3D)),),
           ),
           SizedBox(width: 10),
         ],
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Expanded(
             child: GridView.builder(
@@ -231,32 +116,21 @@ class LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
               ),
               itemCount: languages.length,
               itemBuilder: (context, index) {
-                bool isSelected =
+                isSelected.value =
                     _selectedLanguage == languages[index]['locale'];
                 return GestureDetector(
                   onTap: () async {
                     String? languageCode = languages[index]['locale'];
                     if (languageCode != null) {
-                      // Update the state to reflect the selected language
-                      setState(() {
-                        _selectedLanguage = languageCode;
-                      });
+                      selectLanguage(languageCode);
 
-                      // Save the selected language to SharedPreferences
-                      SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
-                      await prefs.setString('selectedLanguage', languageCode);
-                      await prefs.setBool('seenLanguageSelection', true);
-
-                      // Update the app's locale
-                      Get.updateLocale(Locale(languageCode));
                     }
                   },
                   child: Container(
                     height: 140,
                     child: Card(
-                      color: isSelected ? Colors.grey : Colors.white,
-                      shape: isSelected
+                      color: isSelected.value ? Colors.grey : Colors.white,
+                      shape: isSelected.value
                           ? RoundedRectangleBorder(
                               // side:
                               // BorderSide(color: const Color(0xFF575DDC), width: 2),
@@ -284,15 +158,13 @@ class LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
               },
             ),
           ),
-
+          SizedBox(height: 5,),
           Obx(
             () {
               bool isAdLoaded =
                   languageScreenController.adsHelper.isNativeAdLoaded.value;
               bool isAppOpenAdShowing = GlobalVariable.isAppOpenAdShowing.value;
-              bool isPurchased = GlobalVariable.isPurchasedMonthly.value ||
-                  GlobalVariable.isPurchasedYearly.value ||
-                  GlobalVariable.isPurchasedLifeTime.value;
+
 
               if (!isAdLoaded) {
                 return Padding(
@@ -300,12 +172,14 @@ class LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                       const EdgeInsets.symmetric(horizontal: 1, vertical: 1),
                   child: SizedBox(
                     width: Get.width,
-                    height: 360,
+                    height: 120,
                     child: Shimmer.fromColors(
+                      // baseColor: Colors.orange[300]!, // Change this to your desired orange shade
+                      // highlightColor: Colors.orange[100]!, // Change this to a lighter orange shade
                       baseColor: Colors.grey[300]!,
                       highlightColor: Colors.grey[100]!,
                       child: Container(
-                        color: Colors.white, // Placeholder color
+                        color: Colors.white // Placeholder color
                       ),
                     ),
                   ),
@@ -316,51 +190,16 @@ class LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                       const EdgeInsets.symmetric(horizontal: 1, vertical: 1),
                   child: SizedBox(
                     width: Get.width,
-                    height: 360,
+                    height: 120,
                     child: AdWidget(
                         ad: languageScreenController.adsHelper.nativeAd!),
                   ),
                 );
-              }  else {
+              } else {
                 return const SizedBox();
               }
             },
           )
-
-          ///
-          // Obx(
-          //       () {
-          //     if (languageScreenController.adsHelper.isNativeAdLoaded!.value) {
-          //       return Padding(
-          //         padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 2),
-          //         child: SizedBox(
-          //           width: 360,
-          //           height: 232,
-          //           child: Shimmer.fromColors(
-          //             baseColor: Colors.grey.shade300,
-          //             highlightColor: Colors.grey.shade100,
-          //             child: Container(
-          //               color: Colors.white,
-          //             ),
-          //           ),
-          //         ),
-          //       );
-          //     } else if (languageScreenController.adsHelper.isNativeAdLoaded.value) {
-          //       return Padding(
-          //         padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 2),
-          //         child: SizedBox(
-          //           width: 360,
-          //           height: 232,
-          //           child: AdWidget(
-          //             ad: languageScreenController.adsHelper.nativeAd!,
-          //           ),
-          //         ),
-          //       );
-          //     } else {
-          //       return SizedBox();
-          //     }
-          //   },
-          // ),
         ],
       ),
     );

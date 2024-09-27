@@ -1,5 +1,6 @@
 import 'package:all_languages_voice_dictionary/ads/adshelper.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class LanguageScreenController extends GetxController {
   AdsHelper adsHelper = AdsHelper();
@@ -10,8 +11,8 @@ class LanguageScreenController extends GetxController {
     super.onReady();
     loadAds();
   }
-  void loadAds(){
-    adsHelper.loadNativeAd();
-  }
 
+  void loadAds() {
+    adsHelper.loadNativeAd(templateType: TemplateType.small);
+  }
 }

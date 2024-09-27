@@ -2,9 +2,8 @@ import 'package:all_languages_voice_dictionary/ads/adshelper.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-class OnBoardingController extends GetxController{
+class OnBoardingController extends GetxController {
   RxBool isLastPage = false.obs;
-
 
   AdsHelper adsHelper = AdsHelper();
   @override
@@ -13,8 +12,9 @@ class OnBoardingController extends GetxController{
     super.onInit();
     loadAds();
   }
-  void loadAds(){
-    adsHelper.loadNativeAd();
+
+  void loadAds() {
+    adsHelper.loadNativeAd(templateType: TemplateType.medium);
     adsHelper.loadNativeAd2();
     adsHelper.loadNativeAd3();
 
@@ -65,5 +65,4 @@ class OnBoardingController extends GetxController{
     super.onClose();
     print('Controller onclosed Called');
   }
-
 }

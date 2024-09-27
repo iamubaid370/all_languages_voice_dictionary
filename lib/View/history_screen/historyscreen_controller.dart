@@ -10,54 +10,44 @@ import 'package:sqflite/sqflite.dart';
 import '../../database/db_helper.dart';
 import '../../model/history_model.dart';
 
-class HistoryScreenController extends GetxController{
-
+class HistoryScreenController extends GetxController {
   AdsHelper adsHelper = AdsHelper();
   final HistoryRepository historyRepository = HistoryRepository();
 
   List<HistoryModel> historyList = <HistoryModel>[].obs;
 
   @override
-  void onReady(){
+  void onReady() {
     //adsHelper.loadNativeAd();
     loadHistory();
     print('Native Add loaded');
     super.onReady();
   }
+
   @override
   void onInit() {
     super.onInit();
-    loadAd();
-
+    if (adsHelper.interstitialAd != null) {
+      adsHelper.showInterstitialAd(nextScreen: '/history');
+      print('Interstitial ad loaded successfully.');
+    }
   }
 
   @override
-  void onClose(){
+  void onClose() {
     adsHelper.nativeAd?.dispose();
     debugPrint('HistoryScreenController onClose called,Native Ad disposed');
     super.onClose();
   }
 
-  void loadAd(){
-    adsHelper.loadBannerAd();
-  }
-
-
-  // @override
-  // void onReady() {
-  //  adsHelper.loadNativeAd();
-  //   super.onReady();
-  // }
-
-
-
   void addToHistory(String word) async {
-
     // if(!historyList.contains(word)){
     //   historyList.add(word);
     // }
 
-    HistoryModel newItem = HistoryModel(text: word,);
+    HistoryModel newItem = HistoryModel(
+      text: word,
+    );
     //await DbHelper.dbInstance.insertHistory(newItem);
     HistoryModel insertedItem = await historyRepository.insertData(newItem);
     if (!historyList.any((item) => item.text == word)) {
@@ -76,20 +66,16 @@ class HistoryScreenController extends GetxController{
     // if(historyList.contains(item)){
     //   historyList.remove(item);
     // }
-    try{
+    try {
       await historyRepository.deleteData(item);
-     // await DbHelper.dbInstance.deleteHistory(item);
+      // await DbHelper.dbInstance.deleteHistory(item);
       historyList.remove(item);
       //historyList.removeWhere((historyItem) => historyItem.id == item);
-    }catch(e){
+    } catch (e) {
       debugPrint('Error deleting item : $e');
     }
     debugPrint('history deleted');
 
     //historyList.remove(item);
-
   }
-
-
-
 }

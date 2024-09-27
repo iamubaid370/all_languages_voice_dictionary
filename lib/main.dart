@@ -8,6 +8,7 @@ import 'package:all_languages_voice_dictionary/View/meaning_screen/meaning.dart'
 import 'package:all_languages_voice_dictionary/View/splash_screen/splash3.dart';
 import 'package:all_languages_voice_dictionary/View/splash_screen/splash4.dart';
 import 'package:all_languages_voice_dictionary/View/splash_screen/splash_screen.dart';
+import 'package:all_languages_voice_dictionary/View/welcome_screen/welcome_screen.dart';
 import 'package:all_languages_voice_dictionary/services/analytics_services.dart';
 import 'package:all_languages_voice_dictionary/services/notification.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -29,6 +30,8 @@ import 'View/home_screen/home_screen.dart';
 import 'View/onboarding/onboading_screen.dart';
 import 'View/splash_screen/splash2.dart';
 import 'View/translation_screen/translation.dart';
+import 'ads/remote_config.dart';
+import 'fireBase/remoteConfig/remoteConfigServices.dart';
 import 'firebase_options.dart';
 import 'localiztion/localiztion.dart';
 
@@ -37,6 +40,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  await FirebaseRemoteConfigService().initialize();
+
   ///crashlytics
   FlutterError.onError = (errorDetails) {
     FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
@@ -46,7 +52,6 @@ void main() async {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
-
 
   // await LocalNotification.init();
   await Permission.notification.isDenied.then((value) {
@@ -66,12 +71,15 @@ void main() async {
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? languageCode = prefs.getString('selectedLanguage') ?? 'en';
-  runApp( MyApp(languageCode: languageCode));
+  runApp(MyApp(languageCode: languageCode));
 }
 
 class MyApp extends StatelessWidget {
   //final bool onboarding;
-  MyApp({super.key, required this.languageCode, });
+  MyApp({
+    super.key,
+    required this.languageCode,
+  });
   final String languageCode;
 
   // This widget is the root of your application.
@@ -87,22 +95,26 @@ class MyApp extends StatelessWidget {
         fallbackLocale: const Locale('en', 'US'),
         title: 'Flutter Demo',
 
-        navigatorObservers:<NavigatorObserver> [
+        navigatorObservers: <NavigatorObserver>[
           AnalyticsService().getAnalyticsObserver()
         ],
         //home: SplashScreen(),
         initialRoute: '/',
-        getPages:[
-          GetPage(name: '/',page: ()=>SplashScreen()),
-          GetPage(name: '/splash2',page: ()=>Splash2()),
-          GetPage(name: '/splash3',page: ()=>Splash3()),
-          GetPage(name: '/onBoardingScreen',page: ()=>OnboardingScreen()),
-          GetPage(name: '/languageLocalizationScreen',page: ()=>LanguageSelectionScreen()),
-          GetPage(name: '/home',page: ()=>HomeScreen()),
-          GetPage(name: '/translation',page: ()=>TranslationScreen()),
-          GetPage(name: '/favourite',page: ()=>FavouriteScreen()),
-          GetPage(name: '/history',page: ()=>HistoryScreen()),
-          GetPage(name: '/meaning',page: ()=>Meaning()),
+
+        getPages: [
+          GetPage(name: '/', page: () => SplashScreen()),
+          GetPage(name: '/splash2', page: () => Splash2()),
+          GetPage(name: '/splash3', page: () => Splash3()),
+          GetPage(name: '/onBoardingScreen', page: () => OnboardingScreen()),
+          GetPage(
+              name: '/languageLocalizationScreen',
+              page: () => LanguageSelectionScreen()),
+          GetPage(name: '/welcome', page: () => WelcomeScreen()),
+          GetPage(name: '/home', page: () => HomeScreen()),
+          GetPage(name: '/translation', page: () => TranslationScreen()),
+          GetPage(name: '/favourite', page: () => FavouriteScreen()),
+          GetPage(name: '/history', page: () => HistoryScreen()),
+          GetPage(name: '/meaning', page: () => Meaning()),
           //GetPage(name: '/history',page: ()=>HistoryScreen()),
         ],
         debugShowCheckedModeBanner: false,
@@ -111,5 +123,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-//////////third comit
 
+
+
+//////////third comit

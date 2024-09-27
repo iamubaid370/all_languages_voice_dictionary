@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
 
-
-
 RxBool isUrdu = true.obs;
 RxBool isPashto = false.obs;
 RxBool isArabic = false.obs;
@@ -19,11 +17,21 @@ final FlutterTts flutterTts = FlutterTts();
 var selectedText = "".obs;
 
 class GlobalVariable {
+
+  ///Remote Config
+  ///
+  static RxBool nativeAdRemoteConfig = false.obs;
+  static RxBool instatitalRemoteConfig = false.obs;
+  static RxBool isAdShowRemoteConfig =  false.obs;
+
+
+
+
   /// ----------------------- IAP IDs ---------------------------
   static String monthlyId = Platform.isIOS ? 'com.pz.le.monthly' : 'and';
   static String yearlyId = Platform.isIOS ? 'com.pz.le.yearly' : 'and';
   static String lifeTimeId =
-  Platform.isIOS ? 'com.learnenglish.removeads' : 'and';
+      Platform.isIOS ? 'com.learnenglish.removeads' : 'and';
   static Set<String> IAP_IDs = {monthlyId, yearlyId, lifeTimeId};
 
   static RxBool isPurchasedMonthly = false.obs;
@@ -38,27 +46,26 @@ class GlobalVariable {
   static const bannerAdIOS = !kDebugMode
       ? 'ca-app-pub-6941637095433882/1733295014'
       : //real
-  'ca-app-pub-3940256099942544/2934735716'; // testing
+      'ca-app-pub-3940256099942544/2934735716'; // testing
 
   static const interAdAndroid = 'ca-app-pub-3940256099942544/1033173712';
   static const interAdIOS = !kDebugMode
       ? 'ca-app-pub-6941637095433882/4308144009'
       : // real
-  'ca-app-pub-3940256099942544/4411468910'; // test
+      'ca-app-pub-3940256099942544/4411468910'; // test
 
   static const nativeAdAndroid = 'ca-app-pub-3940256099942544/2247696110';
   static const nativeAdIOS = !kDebugMode
       ? 'ca-app-pub-6941637095433882/8720541042'
       : // real
-  'ca-app-pub-3940256099942544/3986624511'; //test
-
+      'ca-app-pub-3940256099942544/3986624511'; //test
 
   static const openAppAndroid = 'ca-app-pub-3940256099942544/9257395921';
-      //'ca-app-pub-3940256099942544/3419835294';
+  //'ca-app-pub-3940256099942544/3419835294';
   static const openAppAdIOS = !kDebugMode
       ? 'ca-app-pub-6941637095433882/1712035591'
       : //real
-  'ca-app-pub-3940256099942544/5662855259'; //testing
+      'ca-app-pub-3940256099942544/5662855259'; //testing
 
 // ----------------in app purchase ----------------------------------------
 

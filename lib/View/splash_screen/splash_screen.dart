@@ -225,7 +225,7 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar:   Obx(
+      bottomNavigationBar:Obx(
             () {
           bool isAdLoaded = splashController.adsHelper.isBannerAdLoaded.value &&
               splashController.adsHelper.bannerAd != null &&
@@ -268,105 +268,46 @@ class SplashScreen extends StatelessWidget {
         },
       ),
       body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Padding(
-            //   padding: EdgeInsets.only(top:Get.width* 0.05,left: Get.width * 0.6 ),
-            //   child: TextButton(onPressed: (){Get.to(()=>Splash4());}, child: Text('Skip',style: TextStyle(color: Colors.grey),)),
-            // ),
-            // SizedBox(height: Get.height* 0.1,),
-            // Column(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children: [
-            //     Text(
-            //       'All Languages Voice Dictionary',
-            //       style: TextStyle(
-            //           fontSize: 18,
-            //           fontFamily: 'Arial',
-            //           fontWeight: FontWeight.w800,
-            //           color: Color(0xFFE64D3D)),
-            //     ),
-            //     Padding(
-            //       padding: EdgeInsets.only(
-            //         top: Get.height * 0.04,
-            //         bottom: Get.height * 0.04,
-            //       ),
-            //       child: Text(
-            //           'Discover words meaning, hear accurate pronounciations,\n'
-            //               ' and expand your dictionary with our voice dictionary',
-            //           style: TextStyle(
-            //               fontSize: 11,
-            //               fontFamily: 'Arial',
-            //               //fontWeight: FontWeight.w700,
-            //               color: Colors.grey)),
-            //     ),
-            //     Image.asset(
-            //       "assets/splash1.png",
-            //       width: 400,
-            //       height: MediaQuery.of(context).size.height * 0.3,
-            //     ),
-            //     Padding(
-            //       padding: EdgeInsets.only(top: Get.height * 0.06,bottom:Get.height * 0.05),
-            //       child: Row(
-            //         mainAxisAlignment: MainAxisAlignment.center,
-            //         children: [
-            //           Container(
-            //             width: 20,
-            //             height: 10.0,
-            //             decoration: BoxDecoration(
-            //                 shape: BoxShape.rectangle,
-            //                 borderRadius: BorderRadius.circular(30),
-            //                 color: Color(0xFFE64D3D)
-            //             ),
-            //           ),
-            //           Padding(
-            //             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            //             child:
-            //             Container(
-            //               width: 10,
-            //               height: 10.0,
-            //               decoration: BoxDecoration(
-            //                   shape: BoxShape.circle,
-            //                   color: Colors.grey
-            //               ),
-            //             ),
-            //           ),
-            //           Container(
-            //             width: 10,
-            //             height: 10.0,
-            //             decoration: BoxDecoration(
-            //                 shape: BoxShape.circle,
-            //                 color: Colors.grey
-            //             ),
-            //           ),
-            //         ],),
-            //     ),
-            //   ],
-            // ),
-            // customTextButton(
-            //     voidCallBack: () {
-            //       //Get.to(()=>Splash2());
-            //     },
-            //     title: 'Next',
-            //     color: Color(0xFFE64D3D),
-            //
-            // ),
-          Center(
-            child:
-            Text(
-                  'Welcome',
-                  style: TextStyle(
-                      fontSize: 22,
-                      fontFamily: 'Arial',
-                      fontWeight: FontWeight.w800,
-                      color: Color(0xFFE64D3D),),
-                ),
+        child: Center(
+          child: Column(
+             //mainAxisAlignment: MainAxisAlignment.center,
+             crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Spacer(),
+        Text('WELCOME TO',  // First part of the text
+          style: TextStyle(
+            fontSize: 40,
+            fontFamily: 'Arial',
+            fontWeight: FontWeight.w800,
+            color: Color(0xFFE64D3D), // Color for the first part
           ),
+          ),
+          Text('All Languages Dictionary\nNo 1 Dictionary in the World',  // Second part of the text
+            style: TextStyle(
+              overflow: TextOverflow.visible, //
+
+              fontSize: 12,
+              fontFamily: 'Arial',
+              //fontWeight: FontWeight.w400,
+              color: Color(0xFFE64D3D),  // Same color or change if needed
+            ),
+          ),
+              Spacer(),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.3,
+                height: MediaQuery.of(context).size.height * 0.2,
+                child: Image.asset('assets/dictionary1.png'),
+              ),
+              Spacer(),
+              SplashController(). progressValue.value == 100.0 ?CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFE64D3D)),
+              ):SizedBox(),
 
 
-          ],
+
+
+            ],
+          ),
         ),
       ),
     );

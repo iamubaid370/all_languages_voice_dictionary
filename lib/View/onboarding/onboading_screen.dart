@@ -148,8 +148,6 @@
 // }
 //
 
-
-
 ///onboarding
 
 // import 'package:all_languages_voice_dictionary/View/home_screen/homescreen_controller.dart';
@@ -346,46 +344,48 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return Scaffold(
       bottomSheet: Container(
         color: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-        child: isLastPage? getStarted() : Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        child: isLastPage
+            ? getStarted()
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  //Skip Button
+                  TextButton(
+                      onPressed: () => pageController
+                          .jumpToPage(controller.items.length - 1),
+                      child: Text("Skip".tr)),
 
-            //Skip Button
-            TextButton(
-                onPressed: ()=>pageController.jumpToPage(controller.items.length-1),
-                child:  Text("Skip".tr)),
+                  //Indicator
+                  SmoothPageIndicator(
+                    controller: pageController,
+                    count: controller.items.length,
+                    onDotClicked: (index) => pageController.animateToPage(index,
+                        duration: const Duration(milliseconds: 600),
+                        curve: Curves.easeIn),
+                    effect: const WormEffect(
+                      dotHeight: 12,
+                      dotWidth: 12,
+                      activeDotColor: Color(0xFFE64D3D),
+                    ),
+                  ),
 
-            //Indicator
-            SmoothPageIndicator(
-              controller: pageController,
-              count: controller.items.length,
-              onDotClicked: (index)=> pageController.animateToPage(index,
-                  duration: const Duration(milliseconds: 600), curve: Curves.easeIn),
-              effect: const WormEffect(
-                dotHeight: 12,
-                dotWidth: 12,
-                activeDotColor: Color(0xFFE64D3D),
+                  //Next Button
+                  TextButton(
+                    onPressed: () => pageController.nextPage(
+                        duration: const Duration(milliseconds: 600),
+                        curve: Curves.easeIn),
+                    child: Text("Next".tr),
+                  ),
+                ],
               ),
-            ),
-
-            //Next Button
-            TextButton(
-                onPressed: ()=>pageController.nextPage(
-                    duration: const Duration(milliseconds: 600), curve: Curves.easeIn),
-                child:  Text("Next".tr),
-            ),
-
-
-          ],
-        ),
       ),
       body: Container(
         margin: const EdgeInsets.symmetric(horizontal: 15),
         child: PageView.builder(
-            onPageChanged: (index){
-              setState((){
-                isLastPage = controller.items.length-1 == index;
+            onPageChanged: (index) {
+              setState(() {
+                isLastPage = controller.items.length - 1 == index;
 
                 //  if (index == controller.items.length - 2) {
                 //   onBoardingController.loadSecondAd();
@@ -406,10 +406,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 //   showThirdAd= false;
                 // }
               });
-              },
+            },
             itemCount: controller.items.length,
             controller: pageController,
-            itemBuilder: (context,index){
+            itemBuilder: (context, index) {
               NativeAd? ad = onBoardingController.getAd(index);
               return SingleChildScrollView(
                 child: Column(
@@ -417,31 +417,42 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   children: [
                     Container(
                       //color: Colors.blue,
-                      height: Get.height*0.6,
+                      height: Get.height * 0.48,
                       child: Padding(
-                        padding:  EdgeInsets.only(top: Get.height*0.1),
+                        padding: EdgeInsets.only(top: Get.height * 0.1),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(controller.items[index].title.tr, style: TextStyle(
-                              fontSize: 18,
-                              fontFamily: 'Arial',
-                              fontWeight: FontWeight.w800,
-                              color: Color(0xFFE64D3D),),),
-                            Text(controller.items[index].description.tr,style: TextStyle(
-                                fontSize: 11,
+                            Text(
+                              controller.items[index].title.tr,
+                              style: TextStyle(
+                                fontSize: 18,
                                 fontFamily: 'Arial',
-                                //fontWeight: FontWeight.w700,
-                                color: Colors.grey),),
-                            SizedBox(height: Get.height* 0.08,),
-                            Image.asset(controller.items[index].image,
-                              width: Get.width/1.3,
-                              height: MediaQuery.of(context).size.height * 0.3,),
-
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFFE64D3D),
+                              ),
+                            ),
+                            Text(
+                              controller.items[index].description.tr,
+                              style: TextStyle(
+                                  fontSize: 11,
+                                  fontFamily: 'Arial',
+                                  //fontWeight: FontWeight.w700,
+                                  color: Colors.grey),
+                            ),
+                            SizedBox(
+                              height: Get.height * 0.08,
+                            ),
+                            Image.asset(
+                              controller.items[index].image,
+                              width: Get.width / 1.3,
+                              height: MediaQuery.of(context).size.height * 0.2,
+                            ),
                           ],
                         ),
                       ),
                     ),
+
                     /// ads
                     // showSecondAd ?Obx(
                     //       () => (onBoardingController.adsHelper.isNativeAd2Loaded.value &&
@@ -532,33 +543,31 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     //       : const SizedBox(),
                     // ),
 
+                    if (ad != null)
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          // minWidth: 320, // minimum recommended width
+                          // minHeight: 320, // minimum recommended height
+                          maxWidth: 360,
+                          maxHeight: 382,
+                        ),
+                        child: AdWidget(ad: ad),
+                      )
 
-
-                  if(ad!=null)  ConstrainedBox(
-                constraints: const BoxConstraints(
-                  // minWidth: 320, // minimum recommended width
-                  // minHeight: 320, // minimum recommended height
-                  maxWidth: 360,
-                  maxHeight: 232,
-
-                ),
-                child: AdWidget(ad: ad),
-              )
-
-                // ad!=null? Padding(
-                //     padding: const EdgeInsets.symmetric(
-                //         horizontal: 3, vertical: 2),
-                //     child: SizedBox(
-                //       width:360,
-                //       height: 232,
-                //       // homeScreenController.adsHelper.bannerAd!.size.height
-                //       //     .toDouble(),
-                //
-                //       child: AdWidget(
-                //         ad: onBoardingController.adsHelper.nativeAd2!,
-                //       ),
-                //     )
-                // ):SizedBox()
+                    // ad!=null? Padding(
+                    //     padding: const EdgeInsets.symmetric(
+                    //         horizontal: 3, vertical: 2),
+                    //     child: SizedBox(
+                    //       width:360,
+                    //       height: 232,
+                    //       // homeScreenController.adsHelper.bannerAd!.size.height
+                    //       //     .toDouble(),
+                    //
+                    //       child: AdWidget(
+                    //         ad: onBoardingController.adsHelper.nativeAd2!,
+                    //       ),
+                    //     )
+                    // ):SizedBox()
 
                     /// ads
                     // Obx(() {
@@ -622,45 +631,41 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     //
                     //   return const SizedBox(); // User has purchased a subscription
                     // })
-
-              ],
+                  ],
                 ),
               );
-
             }),
       ),
     );
   }
 
-   Widget getStarted(){
+  Widget getStarted() {
     return Container(
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: Color(0xFFE64D3D)
-      ),
+          borderRadius: BorderRadius.circular(8), color: Color(0xFFE64D3D)),
       width: MediaQuery.of(context).size.width * .9,
       height: 55,
       child: TextButton(
-          onPressed: ()async{
+          onPressed: () async {
             final pres = await SharedPreferences.getInstance();
             pres.setBool("seenOnboarding", true);
 
-            if(!mounted)return;
+            if (!mounted) return;
 
-            if (onBoardingController.adsHelper.interstitialAd !=
-                null) {
+            if (onBoardingController.adsHelper.interstitialAd != null) {
               onBoardingController.adsHelper
-                  .showInterstitialAd(nextScreen: '/home');
+                  .showInterstitialAd(nextScreen: '/welcome');
               print('interstitial ad load successfuly');
             } else {
-              onBoardingController.adsHelper
-                  .showInterstitialAd(nextScreen: '/home');
+              Get.to(() => HomeScreen());
               print('interstitial ad not loaded');
             }
             //Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
           },
-          child:  Text("Get started".tr,style: TextStyle(color: Colors.white),)),
+          child: Text(
+            "Get started".tr,
+            style: TextStyle(color: Colors.white),
+          )),
     );
   }
 }
-
