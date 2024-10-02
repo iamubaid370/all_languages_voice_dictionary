@@ -14,10 +14,12 @@ class OnBoardingController extends GetxController {
   }
 
   void loadAds() {
-    adsHelper.loadNativeAd(templateType: TemplateType.medium);
-    adsHelper.loadNativeAd2();
-    adsHelper.loadNativeAd3();
-
+    // adsHelper.loadNativeAd(templateType: TemplateType.medium);
+    // adsHelper.loadNativeAd2();
+    // adsHelper.loadNativeAd3();
+    adsHelper.loadBannerAd();
+    adsHelper.loadBannerAd2();
+    adsHelper.loadBannerAd3();
     adsHelper.loadInterstitialAd();
   }
 

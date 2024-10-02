@@ -10,8 +10,8 @@ class OnBoardingItems {
 
     OnboardingInfo(
         title:  'Instant Translation',
-        description:'Our Translation feature makes it simple to understand and learn language.'
-            'Just enter your text and get a clear translation in seconds',
+        description:'Our Translation feature makes it simple to understand\n and learn language.'
+            'Just enter your text and get a\n clear translation in seconds',
         image: "assets/splash2.png"),
 
     OnboardingInfo(

@@ -128,8 +128,9 @@ class HomeScreenController extends GetxController {
   void openMobileDataSettings() async {
     await AppSettings.openAppSettings(type: AppSettingsType.dataRoaming);
   }
-
+  @override
   void onInit() {
+    adsHelper.loadBannerAd();
     loadAds();
     textEditingController = TextEditingController();
     initSpeech();
@@ -137,6 +138,13 @@ class HomeScreenController extends GetxController {
       update();
     });
     super.onInit();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    textEditingController.dispose();
   }
 
   @override
@@ -154,14 +162,9 @@ class HomeScreenController extends GetxController {
 
 
   void loadAds() {
-    //
-    // if(GlobalVariable.instatitalRemoteConfig.value == true){
-    //
-    // }
-
     adsHelper.loadAppOpenAd();
-    // adsHelper?.loadInterstitialAd();
-    //adsHelper.loadNativeAd();
+     adsHelper?.loadInterstitialAd();
+
   }
 
   void listenToAppStateChanges() {

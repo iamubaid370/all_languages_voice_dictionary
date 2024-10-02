@@ -23,6 +23,10 @@ class GlobalVariable {
   static RxBool nativeAdRemoteConfig = false.obs;
   static RxBool instatitalRemoteConfig = false.obs;
   static RxBool isAdShowRemoteConfig =  false.obs;
+  static RxBool homeNativeAdRemoteConfig = false.obs;
+  static RxBool homeBannerAdRemoteConfig = false.obs;
+  static RxBool LanguageSelectionScreenNativeAd = false.obs;
+  static RxBool LanguageSelectionScreenBannerAd = false.obs;
 
 
 

@@ -155,6 +155,11 @@ class SplashController extends GetxController {
       GlobalVariable.instatitalRemoteConfig.value = remoteConfigService.getBool(RemoteConfigKeys.interstitialAdKey);
       GlobalVariable.nativeAdRemoteConfig.value = remoteConfigService.getBool(RemoteConfigKeys.nativeAdKey);
       GlobalVariable.isAdShowRemoteConfig.value = remoteConfigService.getBool(RemoteConfigKeys.showAds);
+      GlobalVariable.homeNativeAdRemoteConfig.value = remoteConfigService.getBool(RemoteConfigKeys.homeScreenNativeAd);
+      GlobalVariable.homeBannerAdRemoteConfig.value = remoteConfigService.getBool(RemoteConfigKeys.homeScreenBannerAd);
+      GlobalVariable.LanguageSelectionScreenNativeAd.value = remoteConfigService.getBool(RemoteConfigKeys.LanguageSelectionScreenNativeAd);
+      GlobalVariable.LanguageSelectionScreenBannerAd.value = remoteConfigService.getBool(RemoteConfigKeys.LanguageSelectionScreenBannerAd);
+
 
 
       print("++++++++++++++++++++++++++++++++++++");
@@ -189,7 +194,10 @@ class SplashController extends GetxController {
         GlobalVariable.instatitalRemoteConfig.value = remoteConfigService.getBool(RemoteConfigKeys.interstitialAdKey);
         GlobalVariable.nativeAdRemoteConfig.value = remoteConfigService.getBool(RemoteConfigKeys.nativeAdKey);
         GlobalVariable.isAdShowRemoteConfig.value = remoteConfigService.getBool(RemoteConfigKeys.showAds);
-
+        GlobalVariable.homeNativeAdRemoteConfig.value = remoteConfigService.getBool(RemoteConfigKeys.homeScreenNativeAd);
+        GlobalVariable.homeBannerAdRemoteConfig.value = remoteConfigService.getBool(RemoteConfigKeys.homeScreenBannerAd);
+        GlobalVariable.LanguageSelectionScreenNativeAd.value = remoteConfigService.getBool(RemoteConfigKeys.LanguageSelectionScreenNativeAd);
+        GlobalVariable.LanguageSelectionScreenBannerAd.value = remoteConfigService.getBool(RemoteConfigKeys.LanguageSelectionScreenBannerAd);
 
         print("++++++++++++++++++++++++++++++++++++");
 

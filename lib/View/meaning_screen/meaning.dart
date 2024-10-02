@@ -33,6 +33,8 @@ class _MeaningState extends State<Meaning> {
   HistoryScreenController historyScreenController = Get.find();
   MeaningScreenController meaningScreenController =
       Get.put(MeaningScreenController());
+  FavouriteController favouriteController = Get.find<FavouriteController>();
+
 
   List<String> suggestions = [
     'apple',
@@ -97,7 +99,7 @@ class _MeaningState extends State<Meaning> {
                         padding: EdgeInsets.symmetric(
                             vertical: Get.height * 0.09,
                             horizontal: Get.width * 0.2),
-                        child: Text('ALL LANGUAGES DICTIONARY',
+                        child: Text('ALL LANGUAGES DICTIONARY'.tr,
                             style: TextStyle(
                                 fontFamily: 'Arial',
                                 fontSize: 14,
@@ -173,11 +175,171 @@ class _MeaningState extends State<Meaning> {
                           ],
                         ),
                       ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            top: Get.height * 0.23,
+                            left: Get.width * 0.06,
+                            right: Get.width * 0.06),
+                        child: Container(
+                          height: Get.height * 0.08,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12)),
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 25.0).r,
+                            child: Obx(() {
+                              String currentText =
+                                  homeScreenController.currentText.value;
+                              bool isFavourite = favouriteController.favouritesList
+                                  .contains(currentText);
+                              bool isTextEmpty = currentText.isEmpty;
+
+                              return Autocomplete<String>(
+                                optionsBuilder:
+                                    (TextEditingValue textEditingValue) {
+                                  if (textEditingValue.text.isEmpty) {
+                                    return const Iterable.empty();
+                                  } else {
+                                    return suggestions.where((String option) {
+                                      return option.contains(
+                                          textEditingValue.text.toLowerCase());
+                                    });
+                                  }
+                                },
+                                fieldViewBuilder: (
+                                    BuildContext context,
+                                    TextEditingController textEditingController,
+                                    FocusNode focusNode,
+                                    VoidCallback onFieldSubmitted,
+                                    ) {
+                                  homeScreenController.textEditingController =
+                                      textEditingController;
+                                  homeScreenController.focusNode = focusNode;
+                                  focusNode.addListener(() {
+                                    homeScreenController.update();
+                                  });
+                                  return TextField(
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: focusNode.hasFocus
+                                          ? ''
+                                          : 'Write Something...'.tr,
+                                      alignLabelWithHint: true,
+                                      contentPadding: EdgeInsets.only(
+                                          top: 20, left: 15, right: 15),
+                                      suffixIcon: Wrap(
+                                        children: [
+                                          IconButton(
+                                            onPressed: () async {
+                                              await homeScreenController
+                                                  .checkInternetConnection();
+                                              if (!homeScreenController
+                                                  .isConnected.value) {
+                                                homeScreenController
+                                                    .checkInternetConnection();
+                                              } else {
+                                                if (homeScreenController
+                                                    .speechToText.isNotListening) {
+                                                  homeScreenController
+                                                      .startListening();
+                                                  showListeningDialog(context);
+                                                } else {
+                                                  homeScreenController
+                                                      .stopListening();
+                                                }
+                                              }
+                                            },
+                                            tooltip: 'Listen'.tr,
+                                            icon: Image.asset(
+                                              'assets/speaker.png',
+                                              height: Get.height * 0.055.h,
+                                              width: Get.width * 0.055.w,
+                                              fit: BoxFit.contain,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                right: 10.0, top: 4),
+                                            child: IconButton(
+                                              onPressed: () async {
+                                                await homeScreenController
+                                                    .checkInternetConnection();
+
+                                                if (!homeScreenController
+                                                    .isConnected.value) {
+                                                  homeScreenController
+                                                      .showNoInternetDialog();
+                                                  return;
+                                                }
+                                                await dropDownButtonController
+                                                    .languageCode(
+                                                    homeScreenController
+                                                        .dropDownValue2.value);
+                                                dropDownButtonController
+                                                    .getLangCode(
+                                                    homeScreenController
+                                                        .dropDownValue2.value);
+                                                if (homeScreenController
+                                                    .textEditingController
+                                                    .text
+                                                    .isNotEmpty) {
+                                                  historyScreenController
+                                                      .addToHistory(
+                                                      homeScreenController
+                                                          .textEditingController
+                                                          .text);
+                                                }
+                                                ;
+                                                homeScreenController
+                                                    .textEditingController
+                                                    .text
+                                                    .isNotEmpty
+                                                    ? Get.offNamed('/meaning')
+                                                    : null;
+                                              },
+                                              icon: Image.asset(
+                                                'assets/search.png',
+                                                height: Get.height * 0.055.h,
+                                                width: Get.width * 0.055.w,
+                                                fit: BoxFit.contain,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    controller: textEditingController,
+                                    focusNode: focusNode,
+                                    onChanged: (text) {
+                                      homeScreenController.updateTextField(text);
+                                    },
+                                    maxLines: 3,
+                                  );
+                                },
+                                onSelected: (String selection) async {
+                                  homeScreenController.updateTextField(selection);
+                                  homeScreenController.textEditingController.text =
+                                      selection;
+                                  await dropDownButtonController.languageCode(
+                                      homeScreenController.dropDownValue2.value);
+                                  dropDownButtonController.getLangCode(
+                                      homeScreenController.dropDownValue2.value);
+                                  Get.find<HistoryScreenController>().addToHistory(
+                                      homeScreenController
+                                          .textEditingController.text);
+                                  Get.offNamed('/meaning');
+                                },
+                              );
+                            }),
+                          ),
+                        ),
+                      ),
+
                     ],
                   ),
                 ),
                 SizedBox(
-                  height: Get.height * 0.48,
+                  height: Get.height * 0.54,
                   child: Column(
                     children: [
                       Expanded(
@@ -252,7 +414,8 @@ class _MeaningState extends State<Meaning> {
                                 ],
                               ),
                             );
-                          } else if (homeScreenController.dictionaryModel ==
+                          }
+                          else if (homeScreenController.dictionaryModel ==
                               null) {
                             return Center(
                               child: Container(
@@ -345,7 +508,7 @@ class _MeaningState extends State<Meaning> {
                             );
                           } else {
                             return SizedBox(
-                              height: Get.height * 0.50,
+                              height: Get.height * 0.5,
                               child: Column(
                                 children: [
                                   // Divider(height: 0.h,),
@@ -421,8 +584,10 @@ class _MeaningState extends State<Meaning> {
                                                     ),
                                                   ),
                                                   TextSpan(
-                                                    text: homeScreenController
-                                                        .dictionaryModel!.word,
+                                                    text: homeScreenController.dictionaryModel !=
+                                                        null ?homeScreenController
+                                                        .dictionaryModel!.word : dropDownButtonController
+                                                        .translatedText.value,
                                                     style: TextStyle(
                                                       fontSize: 16,
                                                       color: Colors.grey,
@@ -562,13 +727,6 @@ class _MeaningState extends State<Meaning> {
                     !GlobalVariable.isAppOpenAdShowing.value &&
                     !GlobalVariable.isInterstitialAdShowing.value)
                 ? Container(
-                    // decoration: BoxDecoration(
-                    //   border: Border.all(
-                    //       // color:
-                    //       // Colors.blue, // Add blue border when ad is loaded
-                    //       // width: 1.5, // Border width
-                    //       ),
-                    // ),
                     child: SizedBox(
                       width: Get.width,
                       height: meaningScreenController

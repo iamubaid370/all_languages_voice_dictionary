@@ -80,12 +80,12 @@ class FavouriteScreen extends StatelessWidget {
             Obx(() {
               if (Get.find<FavouriteController>().favouritesList.isEmpty) {
                 return Expanded(
-                  child: Container(
-                    padding:  EdgeInsets.symmetric(vertical: Get.height * 0.2),
+                  child: Padding(
+                    padding:  EdgeInsets.symmetric(vertical: 120.0),
                     child: Column(
-                      crossAxisAlignment:CrossAxisAlignment.center,
+                      //crossAxisAlignment:CrossAxisAlignment.center,
                       children: [
-                        Image.asset('assets/nodata.gif'),
+                        Image.asset('assets/nodata.gif',height:100,fit: BoxFit.cover,),
                         Center(child: Text("No Favorites available".tr,style: TextStyle(
                             fontFamily: 'Arial', color: Colors.grey.shade700,fontSize: 16,fontWeight: FontWeight.w700
                         ),)),
@@ -253,12 +253,6 @@ class FavouriteScreen extends StatelessWidget {
 
           return isAdLoaded
               ? Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.blue, // Add blue border when ad is loaded
-                width: 1.5, // Border width
-              ),
-            ),
             child: SizedBox(
               width: Get.width,
               height: favouriteController.adsHelper.bannerAd!.size.height

@@ -10,11 +10,15 @@ import '../global/global_variables.dart';
 
 class AdsHelper {
   RxBool isBannerAdLoaded = false.obs;
+  RxBool isBannerAdLoaded2 = false.obs;
+  RxBool isBannerAdLoaded3 = false.obs;
   RxBool isNativeAdLoaded = false.obs;
   RxBool isNativeAd2Loaded = false.obs;
   RxBool isNativeAd3Loaded = false.obs;
 
   BannerAd? bannerAd;
+  BannerAd? bannerAd2;
+  BannerAd? bannerAd3;
   NativeAd? nativeAd;
   NativeAd? nativeAd2;
   NativeAd? nativeAd3;
@@ -110,7 +114,6 @@ class AdsHelper {
         !GlobalVariable.isPurchasedLifeTime.value) {
       InterstitialAd.load(
           adUnitId: interAdUnitId,
-       // adUnitId: RemoteConfig.InterstitialAd,
           request: const AdRequest(),
           adLoadCallback: InterstitialAdLoadCallback(
             // Called when an ad is successfully received.
@@ -211,155 +214,156 @@ class AdsHelper {
   }
 
   void loadNativeAd({TemplateType? templateType}) {
-    // if(RemoteConfig.hideAd){
-    //   return null;
-    // }
-    NativeAd(
-      adUnitId: nativeAdUnitId,
-      // adUnitId: RemoteConfig.NativeAd,
-      listener: NativeAdListener(
-        onAdLoaded: (ad) {
-          debugPrint('$NativeAd loaded.');
-          nativeAd = null;
-          nativeAd = ad as NativeAd;
-          isNativeAdLoaded.value = true;
-          print(ad.nativeAdOptions?.mediaAspectRatio);
-        },
-        onAdFailedToLoad: (ad, error) {
-          // Dispose the ad here to free resources.
-          debugPrint('$NativeAd failed to load: $error');
-          ad.dispose();
-        },
-      ),
-      request: const AdRequest(),
-      nativeTemplateStyle: NativeTemplateStyle(
-        templateType: templateType ?? TemplateType.medium,
-        // mainBackgroundColor: ThemeHelper.primaryColor,
-        // cornerRadius: 10.0,
-        callToActionTextStyle: NativeTemplateTextStyle(
-            textColor: Colors.white,
-            // backgroundColor: ThemeHelper.secondaryColor,
-            style: NativeTemplateFontStyle.bold,
-            size: 13.5),
-        primaryTextStyle: NativeTemplateTextStyle(
+    if(GlobalVariable.nativeAdRemoteConfig.value==true){
+      NativeAd(
+        adUnitId: nativeAdUnitId,
+        // adUnitId: RemoteConfig.NativeAd,
+        listener: NativeAdListener(
+          onAdLoaded: (ad) {
+            debugPrint('$NativeAd loaded.');
+            nativeAd = null;
+            nativeAd = ad as NativeAd;
+            isNativeAdLoaded.value = true;
+            print(ad.nativeAdOptions?.mediaAspectRatio);
+          },
+          onAdFailedToLoad: (ad, error) {
+            // Dispose the ad here to free resources.
+            debugPrint('$NativeAd failed to load: $error');
+            ad.dispose();
+          },
+        ),
+        request: const AdRequest(),
+        nativeTemplateStyle: NativeTemplateStyle(
+          templateType: templateType ?? TemplateType.medium,
+          // mainBackgroundColor: ThemeHelper.primaryColor,
+          // cornerRadius: 10.0,
+          callToActionTextStyle: NativeTemplateTextStyle(
+              textColor: Colors.white,
+              // backgroundColor: ThemeHelper.secondaryColor,
+              style: NativeTemplateFontStyle.bold,
+              size: 13.5),
+          primaryTextStyle: NativeTemplateTextStyle(
             // textColor: ThemeHelper.s,
             // backgroundColor: ThemeColors.bgColor.withOpacity(0.7),
-            style: NativeTemplateFontStyle.italic,
-            size: 13.5),
-        secondaryTextStyle: NativeTemplateTextStyle(
+              style: NativeTemplateFontStyle.italic,
+              size: 13.5),
+          secondaryTextStyle: NativeTemplateTextStyle(
             // textColor: ThemeColors.secondary,
             // backgroundColor: ThemeColors.bgColor.withOpacity(0.7),
-            style: NativeTemplateFontStyle.bold,
-            size: 13),
-        tertiaryTextStyle: NativeTemplateTextStyle(
+              style: NativeTemplateFontStyle.bold,
+              size: 13),
+          tertiaryTextStyle: NativeTemplateTextStyle(
             // textColor: ThemeColors.secondary,
             // backgroundColor: ThemeColors.bgColor.withOpacity(0.7),
-            style: NativeTemplateFontStyle.normal,
-            size: 13),
-      ),
-    ).load();
+              style: NativeTemplateFontStyle.normal,
+              size: 13),
+        ),
+      ).load();
+    }
+
   }
 
   void loadNativeAd2() {
-    // if(RemoteConfig.hideAd){
-    //   return null;
-    // }
-    NativeAd(
-      adUnitId: nativeAdUnitId,
-     // adUnitId: RemoteConfig.NativeAd,
-      listener: NativeAdListener(
-        onAdLoaded: (ad) {
-          debugPrint('$NativeAd Native2 loaded.');
-          nativeAd2 = null;
-          nativeAd2 = ad as NativeAd;
-          isNativeAd2Loaded.value = true;
-          print(ad.nativeAdOptions?.mediaAspectRatio);
-        },
-        onAdFailedToLoad: (ad, error) {
-          // Dispose the ad here to free resources.
-          debugPrint('$NativeAd failed to load: $error');
-          ad.dispose();
-        },
-      ),
-      request: const AdRequest(),
-      nativeTemplateStyle: NativeTemplateStyle(
-        templateType: TemplateType.medium,
-        // mainBackgroundColor: ThemeHelper.primaryColor,
-        // cornerRadius: 10.0,
-        callToActionTextStyle: NativeTemplateTextStyle(
-            textColor: Colors.white,
-            // backgroundColor: ThemeHelper.secondaryColor,
-            style: NativeTemplateFontStyle.bold,
-            size: 13.5),
-        primaryTextStyle: NativeTemplateTextStyle(
+    if(GlobalVariable.nativeAdRemoteConfig.value==true){
+      NativeAd(
+        adUnitId: nativeAdUnitId,
+        // adUnitId: RemoteConfig.NativeAd,
+        listener: NativeAdListener(
+          onAdLoaded: (ad) {
+            debugPrint('$NativeAd Native2 loaded.');
+            nativeAd2 = null;
+            nativeAd2 = ad as NativeAd;
+            isNativeAd2Loaded.value = true;
+            print(ad.nativeAdOptions?.mediaAspectRatio);
+          },
+          onAdFailedToLoad: (ad, error) {
+            // Dispose the ad here to free resources.
+            debugPrint('$NativeAd failed to load: $error');
+            ad.dispose();
+          },
+        ),
+        request: const AdRequest(),
+        nativeTemplateStyle: NativeTemplateStyle(
+          templateType: TemplateType.medium,
+          // mainBackgroundColor: ThemeHelper.primaryColor,
+          // cornerRadius: 10.0,
+          callToActionTextStyle: NativeTemplateTextStyle(
+              textColor: Colors.white,
+              // backgroundColor: ThemeHelper.secondaryColor,
+              style: NativeTemplateFontStyle.bold,
+              size: 13.5),
+          primaryTextStyle: NativeTemplateTextStyle(
             // textColor: ThemeHelper.s,
             // backgroundColor: ThemeColors.bgColor.withOpacity(0.7),
-            style: NativeTemplateFontStyle.italic,
-            size: 13.5),
-        secondaryTextStyle: NativeTemplateTextStyle(
+              style: NativeTemplateFontStyle.italic,
+              size: 13.5),
+          secondaryTextStyle: NativeTemplateTextStyle(
             // textColor: ThemeColors.secondary,
             // backgroundColor: ThemeColors.bgColor.withOpacity(0.7),
-            style: NativeTemplateFontStyle.bold,
-            size: 13),
-        tertiaryTextStyle: NativeTemplateTextStyle(
+              style: NativeTemplateFontStyle.bold,
+              size: 13),
+          tertiaryTextStyle: NativeTemplateTextStyle(
             // textColor: ThemeColors.secondary,
             // backgroundColor: ThemeColors.bgColor.withOpacity(0.7),
-            style: NativeTemplateFontStyle.normal,
-            size: 13),
-      ),
-    ).load();
+              style: NativeTemplateFontStyle.normal,
+              size: 13),
+        ),
+      ).load();
+    }
+
   }
 
   void loadNativeAd3() {
-    // if(RemoteConfig.hideAd){
-    //   return null;
-    // }
-    NativeAd(
-      adUnitId: nativeAdUnitId,
-   //   adUnitId: RemoteConfig.NativeAd,
-      listener: NativeAdListener(
-        onAdLoaded: (ad) {
-          debugPrint('$NativeAd Native3 loaded.');
-          nativeAd3 = null;
-          nativeAd3 = ad as NativeAd;
-          isNativeAd3Loaded.value = true;
-          print(ad.nativeAdOptions?.mediaAspectRatio);
-        },
-        onAdFailedToLoad: (ad, error) {
-          // Dispose the ad here to free resources.
-          debugPrint('$NativeAd failed to load: $error');
-          ad.dispose();
-        },
-      ),
-      request: const AdRequest(),
-      nativeTemplateStyle: NativeTemplateStyle(
-        templateType: TemplateType.medium,
-        // mainBackgroundColor: ThemeHelper.primaryColor,
-        // cornerRadius: 10.0,
-        callToActionTextStyle: NativeTemplateTextStyle(
-            textColor: Colors.white,
-            // backgroundColor: ThemeHelper.secondaryColor,
-            style: NativeTemplateFontStyle.bold,
-            size: 13.5),
-        primaryTextStyle: NativeTemplateTextStyle(
+    if(GlobalVariable.nativeAdRemoteConfig.value==true){
+      NativeAd(
+        adUnitId: nativeAdUnitId,
+        //   adUnitId: RemoteConfig.NativeAd,
+        listener: NativeAdListener(
+          onAdLoaded: (ad) {
+            debugPrint('$NativeAd Native3 loaded.');
+            nativeAd3 = null;
+            nativeAd3 = ad as NativeAd;
+            isNativeAd3Loaded.value = true;
+            print(ad.nativeAdOptions?.mediaAspectRatio);
+          },
+          onAdFailedToLoad: (ad, error) {
+            // Dispose the ad here to free resources.
+            debugPrint('$NativeAd failed to load: $error');
+            ad.dispose();
+          },
+        ),
+        request: const AdRequest(),
+        nativeTemplateStyle: NativeTemplateStyle(
+          templateType: TemplateType.medium,
+          // mainBackgroundColor: ThemeHelper.primaryColor,
+          // cornerRadius: 10.0,
+          callToActionTextStyle: NativeTemplateTextStyle(
+              textColor: Colors.white,
+              // backgroundColor: ThemeHelper.secondaryColor,
+              style: NativeTemplateFontStyle.bold,
+              size: 13.5),
+          primaryTextStyle: NativeTemplateTextStyle(
             // textColor: ThemeHelper.s,
             // backgroundColor: ThemeColors.bgColor.withOpacity(0.7),
-            style: NativeTemplateFontStyle.italic,
-            size: 13.5),
-        secondaryTextStyle: NativeTemplateTextStyle(
+              style: NativeTemplateFontStyle.italic,
+              size: 13.5),
+          secondaryTextStyle: NativeTemplateTextStyle(
             // textColor: ThemeColors.secondary,
             // backgroundColor: ThemeColors.bgColor.withOpacity(0.7),
-            style: NativeTemplateFontStyle.bold,
-            size: 13),
-        tertiaryTextStyle: NativeTemplateTextStyle(
+              style: NativeTemplateFontStyle.bold,
+              size: 13),
+          tertiaryTextStyle: NativeTemplateTextStyle(
             // textColor: ThemeColors.secondary,
             // backgroundColor: ThemeColors.bgColor.withOpacity(0.7),
-            style: NativeTemplateFontStyle.normal,
-            size: 13),
-      ),
-    ).load();
+              style: NativeTemplateFontStyle.normal,
+              size: 13),
+        ),
+      ).load();
+    }
+
   }
 
+  /// BANNER ADS
   void loadBannerAd() async {
     final AnchoredAdaptiveBannerAdSize? size =
         await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
@@ -377,6 +381,56 @@ class AdsHelper {
           log('Banner loaded');
           bannerAd = ad as BannerAd;
           isBannerAdLoaded.value = true;
+        },
+        onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          print('Anchored adaptive banner failedToLoad: $error');
+          ad.dispose();
+        },
+      ),
+    ).load();
+  }
+  void loadBannerAd2() async {
+    final AnchoredAdaptiveBannerAdSize? size =
+        await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
+            Get.width.truncate());
+
+    BannerAd(
+      adUnitId: bannerAdUnitId,
+      //adUnitId: bannerAdUnitId,
+      size: size!,
+      //request: const AdRequest(),
+      request: const AdRequest(extras: {"collapsible": "bottom"}),
+      listener: BannerAdListener(
+        onAdLoaded: (Ad ad) {
+          print('$ad loaded: ${ad.responseInfo}');
+          log('Banner loaded');
+          bannerAd2 = ad as BannerAd;
+          isBannerAdLoaded2.value = true;
+        },
+        onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          print('Anchored adaptive banner failedToLoad: $error');
+          ad.dispose();
+        },
+      ),
+    ).load();
+  }
+  void loadBannerAd3() async {
+    final AnchoredAdaptiveBannerAdSize? size =
+        await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
+            Get.width.truncate());
+
+    BannerAd(
+      adUnitId: bannerAdUnitId,
+      //adUnitId: bannerAdUnitId,
+      size: size!,
+      //request: const AdRequest(),
+      request: const AdRequest(extras: {"collapsible": "bottom"}),
+      listener: BannerAdListener(
+        onAdLoaded: (Ad ad) {
+          print('$ad loaded: ${ad.responseInfo}');
+          log('Banner loaded');
+          bannerAd3 = ad as BannerAd;
+          isBannerAdLoaded3.value = true;
         },
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
           print('Anchored adaptive banner failedToLoad: $error');

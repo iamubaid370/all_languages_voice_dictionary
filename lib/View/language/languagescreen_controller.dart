@@ -14,5 +14,6 @@ class LanguageScreenController extends GetxController {
 
   void loadAds() {
     adsHelper.loadNativeAd(templateType: TemplateType.small);
+    adsHelper.loadBannerAd();
   }
 }

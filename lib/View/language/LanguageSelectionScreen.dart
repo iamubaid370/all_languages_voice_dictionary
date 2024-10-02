@@ -11,6 +11,10 @@ import '../../global/global_variables.dart';
 import '../../widgets/flag_widget.dart';
 
 class LanguageSelectionScreen extends StatefulWidget {
+  final String? type;
+
+  LanguageSelectionScreen({super.key, this.type = ""});
+
   @override
   LanguageSelectionScreenState createState() => LanguageSelectionScreenState();
 }
@@ -20,6 +24,7 @@ class LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
       Get.put(LanguageScreenController());
   String? _selectedLanguage;
   RxBool isSelected = true.obs;
+
   void selectLanguage(String languageCode) async {
     setState(() {
       _selectedLanguage = languageCode;
@@ -37,31 +42,36 @@ class LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
     }
   }
 
-  void _checkLanguageSelectionStatus() async {
+  _checkLanguageSelectionStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool? seenLanguageSelection =
         prefs.getBool('seenLanguageSelection') ?? false;
     bool? seenOnboarding = prefs.getBool('seenOnboarding') ?? false;
 
-    if (seenLanguageSelection) {
-      if (seenOnboarding) {
-        Get.offNamed('/welcome');
-        print(seenOnboarding);
+    if (widget.type == "") {
+      if (seenLanguageSelection) {
+        if (seenOnboarding) {
+          Get.offNamed('/welcome');
+          print(seenOnboarding);
+        } else {
+          Get.offNamed('/onBoardingScreen');
+          print(seenOnboarding);
+        }
       } else {
-        Get.offNamed('/onBoardingScreen');
+        Get.offNamed('/languageLocalizationScreen');
         print(seenOnboarding);
       }
     } else {
-      Get.offNamed('/languageLocalizationScreen');
-      print(seenOnboarding);
+      //Navigator.pop(context);
+      Get.back();
     }
   }
 
-  void goNext() {
+  Future<void> goNext() async {
     //  adsHelper.showAppOpenAd();
     // Get.offNamed('/dash');
-    saveLanguageSelection();
-    _checkLanguageSelectionStatus();
+    await saveLanguageSelection()
+        .then((_) async => await _checkLanguageSelectionStatus());
   }
 
   @override
@@ -96,7 +106,11 @@ class LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                     goNext();
                   }
                 : null,
-            child: Text("Save",style: TextStyle(color: isSelected.value?Colors.white:Color(0xFFE64D3D)),),
+            child: Text(
+              "Save",
+              style: TextStyle(
+                  color: isSelected.value ? Colors.white : Color(0xFFE64D3D)),
+            ),
           ),
           SizedBox(width: 10),
         ],
@@ -123,7 +137,6 @@ class LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                     String? languageCode = languages[index]['locale'];
                     if (languageCode != null) {
                       selectLanguage(languageCode);
-
                     }
                   },
                   child: Container(
@@ -158,51 +171,107 @@ class LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
               },
             ),
           ),
-          SizedBox(height: 5,),
-          Obx(
-            () {
-              bool isAdLoaded =
-                  languageScreenController.adsHelper.isNativeAdLoaded.value;
-              bool isAppOpenAdShowing = GlobalVariable.isAppOpenAdShowing.value;
-
-
-              if (!isAdLoaded) {
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 1, vertical: 1),
-                  child: SizedBox(
-                    width: Get.width,
-                    height: 120,
-                    child: Shimmer.fromColors(
-                      // baseColor: Colors.orange[300]!, // Change this to your desired orange shade
-                      // highlightColor: Colors.orange[100]!, // Change this to a lighter orange shade
-                      baseColor: Colors.grey[300]!,
-                      highlightColor: Colors.grey[100]!,
-                      child: Container(
-                        color: Colors.white // Placeholder color
-                      ),
-                    ),
-                  ),
-                );
-              } else if (isAdLoaded && !isAppOpenAdShowing) {
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 1, vertical: 1),
-                  child: SizedBox(
-                    width: Get.width,
-                    height: 120,
-                    child: AdWidget(
-                        ad: languageScreenController.adsHelper.nativeAd!),
-                  ),
-                );
-              } else {
-                return const SizedBox();
-              }
-            },
-          )
+          SizedBox(
+            height: 5,
+          ),
+          GlobalVariable.LanguageSelectionScreenBannerAd.value == true &&
+              GlobalVariable.LanguageSelectionScreenNativeAd.value ==
+                  true
+              ? langScreenBannerAd():
+          GlobalVariable.LanguageSelectionScreenNativeAd.value == true
+              ? langScreenNativeAd()
+                  :   GlobalVariable.LanguageSelectionScreenBannerAd.value == true ? langScreenBannerAd():SizedBox(),
         ],
       ),
     );
+  }
+
+  Obx langScreenNativeAd() {
+    return Obx(
+                () {
+                  bool isAdLoaded = languageScreenController
+                      .adsHelper.isNativeAdLoaded.value;
+                  bool isAppOpenAdShowing =
+                      GlobalVariable.isAppOpenAdShowing.value;
+
+                  if (!isAdLoaded) {
+                    return GlobalVariable.nativeAdRemoteConfig.value == false
+                        ? SizedBox()
+                        : Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 1, vertical: 1),
+                            child: SizedBox(
+                              width: Get.width,
+                              height: 120,
+                              child: Shimmer.fromColors(
+                                // baseColor: Colors.orange[300]!, // Change this to your desired orange shade
+                                // highlightColor: Colors.orange[100]!, // Change this to a lighter orange shade
+                                baseColor: Colors.grey[300]!,
+                                highlightColor: Colors.grey[100]!,
+                                child: Container(
+                                    color: Colors.white // Placeholder color
+                                    ),
+                              ),
+                            ),
+                          );
+                  } else if (isAdLoaded && !isAppOpenAdShowing) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 1, vertical: 1),
+                      child: SizedBox(
+                        width: Get.width,
+                        height: 120,
+                        child: AdWidget(
+                            ad: languageScreenController.adsHelper.nativeAd!),
+                      ),
+                    );
+                  } else {
+                    return const SizedBox();
+                  }
+                },
+              );
+  }
+
+  Obx langScreenBannerAd() {
+    return Obx(() {
+          bool adLoaded = languageScreenController
+              .adsHelper.isBannerAdLoaded.value &&
+              languageScreenController.adsHelper.bannerAd != null &&
+              !GlobalVariable.isAppOpenAdShowing.value &&
+              !GlobalVariable.isInterstitialAdShowing.value;
+          return adLoaded
+              ? Container(
+            child: SizedBox(
+              width: Get.width,
+              height: languageScreenController
+                  .adsHelper.bannerAd!.size.height
+                  .toDouble(),
+              child: AdWidget(
+                  ad: languageScreenController
+                      .adsHelper.bannerAd!),
+            ),
+          )
+              : Shimmer.fromColors(
+            baseColor: Colors.grey.shade300,
+            highlightColor: Colors.grey.shade100,
+            child: Container(
+              width: Get.width,
+              height:
+              55, // Adjust the height to match the ad height
+              color: Colors.grey
+                  .shade300, // Background color for shimmer
+              child: Center(
+                child: Text(
+                  'Loading ad...', // Optional placeholder text
+                  style: TextStyle(
+                    color: Colors.grey.shade700,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ),
+          );
+        });
   }
 
   final List<Map<String, String>> languages = [
@@ -233,3 +302,30 @@ class LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
     {'name': 'Vietnamese', 'country': 'vn', 'locale': 'vi'},
   ];
 }
+
+
+
+
+// Widget decideContainerForAds() {
+//   if (Platform.isAndroid) {
+//     return Obx(() {
+//       if (GlobalVariable.isBanner.value && GlobalVariable.isSamllNative.value && GlobalVariable.isLargeNAtive.value) {
+//         return banner();
+//       } else if (!GlobalVariable.isBanner.value && !GlobalVariable.isSamllNative.value && !GlobalVariable.isLargeNAtive.value) {
+//         return SizedBox();
+//       } else if (!GlobalVariable.isBanner.value && !GlobalVariable.isSamllNative.value && GlobalVariable.isLargeNAtive.value) {
+//         //for Lage Native Ad came Hear
+//         return largaeNative();
+//       } else if (!GlobalVariable.isBanner.value && GlobalVariable.isSamllNative.value && !GlobalVariable.isLargeNAtive.value) {
+//         return smallNativeAd();
+//       } else {
+//         return banner();
+//       }
+//     });
+//   } else {
+//     return banner();
+//   }
+// }
+
+
+

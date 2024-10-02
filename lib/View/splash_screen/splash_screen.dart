@@ -234,12 +234,7 @@ class SplashScreen extends StatelessWidget {
 
           return isAdLoaded
               ? Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.blue,
-                width: 1.5, // Border width
-              ),
-            ),
+
             child: SizedBox(
               width: Get.width,
               height: splashController.adsHelper.bannerAd!.size.height
@@ -282,7 +277,7 @@ class SplashScreen extends StatelessWidget {
             color: Color(0xFFE64D3D), // Color for the first part
           ),
           ),
-          Text('All Languages Dictionary\nNo 1 Dictionary in the World',  // Second part of the text
+          Text('All Languages Voice Dictionary\nNo 1 Dictionary in the World',  // Second part of the text
             style: TextStyle(
               overflow: TextOverflow.visible, //
 
@@ -292,10 +287,10 @@ class SplashScreen extends StatelessWidget {
               color: Color(0xFFE64D3D),  // Same color or change if needed
             ),
           ),
-              Spacer(),
+              //Spacer(),
               SizedBox(
-                width: MediaQuery.of(context).size.width * 0.3,
-                height: MediaQuery.of(context).size.height * 0.2,
+                width: MediaQuery.of(context).size.width * 0.2,
+                height: MediaQuery.of(context).size.height * 0.15,
                 child: Image.asset('assets/dictionary1.png'),
               ),
               Spacer(),

@@ -113,9 +113,6 @@ class _HomeScreenState extends State<HomeScreen> {
       Get.put(DropDownButtonController());
 
   HistoryModel? historyModel;
-
-  BannerAd? bannerAd;
-
   bool _isLoaded = false;
 
   RxInt currentIndex = 0.obs;
@@ -137,91 +134,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   RxInt _page = 0.obs;
 
-  @override
-  void dispose() {
-    homeScreenController.adsHelper.disposeAds();
-  }
+  // @override
+  // void dispose() {
+  //   homeScreenController.adsHelper.disposeAds();
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
-      drawer: Drawer(
-          width: Get.width * 0.8,
-          child: ListView(
-            children: [
-              Container(
-                color: Color(0xFFE64D3D),
-                height: Get.height * 0.295,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: Get.height * 0.11,
-                      margin: EdgeInsets.only(top: 30, left: 15),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: ClipOval(
-                            child: Image.asset(
-                          'assets/dictionary.png',
-                          fit: BoxFit.cover,
-                        )),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 30, left: 15),
-                      child: Text(
-                        'All Languages Voice Dictionary'.tr,
-                        style: TextStyle(
-                            fontSize: 22,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              drawerCard(
-                  onTap: () {
-                    Get.back();
-                  },
-                  icon: Icons.home,
-                  text: 'Home'.tr),
-              drawerCard(
-                  onTap: () {
-                    Get.to(() => LanguageSelectionScreen());
-                  },
-                  icon: Icons.language,
-                  text: 'Select Languages'.tr),
-              drawerCard(
-                  onTap: () {
-                    Get.to(TranslationScreen());
-                  },
-                  icon: Icons.translate,
-                  text: 'Translation'.tr),
-              drawerCard(
-                  onTap: () {
-                    Get.to(HistoryScreen());
-                  },
-                  icon: Icons.history,
-                  text: 'History'.tr),
-              drawerCard(
-                  onTap: () {
-                    Get.to(FavouriteScreen());
-                  },
-                  icon: Icons.favorite,
-                  text: 'Favourites'.tr),
-              drawerCard(
-                  onTap: () {
-                    Get.to(() => SettingScreen());
-                  },
-                  icon: Icons.settings,
-                  text: 'Setting'.tr),
-            ],
-          )),
+      drawer: buildDrawer(),
       appBar: AppBar(
         title: Text(
           'ALL LANGUAGES DICTIONARY'.tr,
@@ -389,9 +311,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         tooltip: 'Listen'.tr,
                                         icon: Image.asset(
                                           'assets/speaker.png',
-                                          height: Get.height * 0.035.h,
-                                          width: Get.width * 0.04.w,
-                                          fit: BoxFit.cover,
+                                          height: Get.height * 0.055.h,
+                                          width: Get.width * 0.055.w,
+                                          fit: BoxFit.contain,
                                         ),
                                       ),
                                       Padding(
@@ -430,15 +352,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                             homeScreenController
                                                     .textEditingController
                                                     .text
-                                                    .isNotEmpty
-                                                ? Get.to(() => Meaning())
-                                                : null;
+                                                    .isNotEmpty && homeScreenController.adsHelper.interstitialAd !=
+                                                null
+                                                ?  homeScreenController.adsHelper
+                                                .showInterstitialAd(nextScreen: '/meaning') :
+                                            homeScreenController
+                                                .textEditingController
+                                                .text
+                                                .isNotEmpty
+                                                ? Get.to(() => Meaning()):null;
                                           },
                                           icon: Image.asset(
                                             'assets/search.png',
-                                            height: Get.height * 0.035.h,
-                                            width: Get.width * 0.07.w,
-                                            fit: BoxFit.fill,
+                                            height: Get.height * 0.055.h,
+                                            width: Get.width * 0.055.w,
+                                            fit: BoxFit.contain,
                                           ),
                                         ),
                                       ),
@@ -600,21 +528,203 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: Obx(
-        () =>
-            (isNativeAdLoaded.value && !GlobalVariable.isAppOpenAdShowing.value)
-                ? SizedBox(
-                    width: Get.width,
-                    height: 100,
-                    child: AdWidget(ad: nativeAd!),
-                  )
-                : (!GlobalVariable.isPurchasedMonthly.value &&
-                        !GlobalVariable.isPurchasedYearly.value &&
-                        !GlobalVariable.isPurchasedLifeTime.value)
-                    ? SizedBox()
-                    : const SizedBox(),
-      ),
+      bottomNavigationBar:
+      GlobalVariable.homeBannerAdRemoteConfig.value == true &&  GlobalVariable.homeNativeAdRemoteConfig.value==true?
+      Obx(() {
+        bool adLoaded =
+            homeScreenController.adsHelper.isBannerAdLoaded.value &&
+                homeScreenController.adsHelper.bannerAd != null &&
+                !GlobalVariable.isAppOpenAdShowing.value &&
+                !GlobalVariable.isInterstitialAdShowing.value;
+        return adLoaded
+            ? Container(
+          child: SizedBox(
+            width: Get.width,
+            height: homeScreenController
+                .adsHelper.bannerAd!.size.height
+                .toDouble(),
+            child:
+            AdWidget(ad: homeScreenController.adsHelper.bannerAd!),
+          ),
+        )
+            : Shimmer.fromColors(
+          baseColor: Colors.grey.shade300,
+          highlightColor: Colors.grey.shade100,
+          child: Container(
+            width: Get.width,
+            height: 55, // Adjust the height to match the ad height
+            color: Colors.grey.shade300, // Background color for shimmer
+            child: Center(
+              child: Text(
+                'Loading ad...', // Optional placeholder text
+                style: TextStyle(
+                  color: Colors.grey.shade700,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          ),
+        );
+      }):
+          GlobalVariable.homeNativeAdRemoteConfig.value==true ?
+      Obx(
+            () {
+          bool isAdLoaded =
+              isNativeAdLoaded.value;
+          bool isAppOpenAdShowing = GlobalVariable.isAppOpenAdShowing.value;
+
+
+          if (!isAdLoaded) {
+            return GlobalVariable.nativeAdRemoteConfig.value==false ? SizedBox():Padding(
+              padding:
+              const EdgeInsets.symmetric(horizontal: 1, vertical: 1),
+              child: SizedBox(
+                width: Get.width,
+                height: 120,
+                child: Shimmer.fromColors(
+                  // baseColor: Colors.orange[300]!, // Change this to your desired orange shade
+                  // highlightColor: Colors.orange[100]!, // Change this to a lighter orange shade
+                  baseColor: Colors.grey[300]!,
+                  highlightColor: Colors.grey[100]!,
+                  child: Container(
+                      color: Colors.white // Placeholder color
+                  ),
+                ),
+              ),
+            );
+          } else if (isAdLoaded && !isAppOpenAdShowing) {
+            return Padding(
+              padding:
+              const EdgeInsets.symmetric(horizontal: 1, vertical: 1),
+              child: SizedBox(
+                width: Get.width,
+                height: 120,
+                child: AdWidget(
+                    ad: nativeAd!),
+              ),
+            );
+          } else {
+            return const SizedBox();
+          }
+        },
+      ):  GlobalVariable.homeBannerAdRemoteConfig.value == true ?  Obx(() {
+            bool adLoaded =
+                homeScreenController.adsHelper.isBannerAdLoaded.value &&
+                    homeScreenController.adsHelper.bannerAd != null &&
+                    !GlobalVariable.isAppOpenAdShowing.value &&
+                    !GlobalVariable.isInterstitialAdShowing.value;
+            return adLoaded
+                ? Container(
+              child: SizedBox(
+                width: Get.width,
+                height: homeScreenController
+                    .adsHelper.bannerAd!.size.height
+                    .toDouble(),
+                child:
+                AdWidget(ad: homeScreenController.adsHelper.bannerAd!),
+              ),
+            )
+                : Shimmer.fromColors(
+              baseColor: Colors.grey.shade300,
+              highlightColor: Colors.grey.shade100,
+              child: Container(
+                width: Get.width,
+                height: 55, // Adjust the height to match the ad height
+                color: Colors.grey.shade300, // Background color for shimmer
+                child: Center(
+                  child: Text(
+                    'Loading ad...', // Optional placeholder text
+                    style: TextStyle(
+                      color: Colors.grey.shade700,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ),
+            );
+          })
+        :SizedBox(),
+
     );
+  }
+
+  Drawer buildDrawer() {
+    return Drawer(
+        width: Get.width * 0.8,
+        child: ListView(
+          children: [
+            Container(
+              color: Color(0xFFE64D3D),
+              height: Get.height * 0.295,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    height: Get.height * 0.11,
+                    margin: EdgeInsets.only(top: 30, left: 15),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: ClipOval(
+                          child: Image.asset(
+                        'assets/dictionary.png',
+                        fit: BoxFit.cover,
+                      )),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30, left: 15),
+                    child: Text(
+                      'All Languages Voice Dictionary'.tr,
+                      style: TextStyle(
+                          fontSize: 22,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            drawerCard(
+                onTap: () {
+                  Get.back();
+                },
+                icon: Icons.home,
+                text: 'Home'.tr),
+            drawerCard(
+                onTap: () {
+                  Get.to(() => LanguageSelectionScreen(type: 'drawer',));
+                },
+                icon: Icons.language,
+                text: 'Select Languages'.tr),
+            drawerCard(
+                onTap: () {
+                  Get.to(TranslationScreen());
+                },
+                icon: Icons.translate,
+                text: 'Translations'.tr),
+            drawerCard(
+                onTap: () {
+                  Get.to(HistoryScreen());
+                },
+                icon: Icons.history,
+                text: 'History'.tr),
+            drawerCard(
+                onTap: () {
+                  Get.to(FavouriteScreen());
+                },
+                icon: Icons.favorite,
+                text: 'Favourites'.tr),
+            drawerCard(
+                onTap: () {
+                  Get.to(() => SettingScreen());
+                },
+                icon: Icons.settings,
+                text: 'Setting'.tr),
+          ],
+        ));
   }
 
   void showListeningDialog(BuildContext context) {

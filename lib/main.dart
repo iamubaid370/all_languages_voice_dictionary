@@ -98,17 +98,16 @@ class MyApp extends StatelessWidget {
         navigatorObservers: <NavigatorObserver>[
           AnalyticsService().getAnalyticsObserver()
         ],
-        //home: SplashScreen(),
+
         initialRoute: '/',
+        //initialRoute: '/onBoardingScreen',
 
         getPages: [
           GetPage(name: '/', page: () => SplashScreen()),
           GetPage(name: '/splash2', page: () => Splash2()),
           GetPage(name: '/splash3', page: () => Splash3()),
           GetPage(name: '/onBoardingScreen', page: () => OnboardingScreen()),
-          GetPage(
-              name: '/languageLocalizationScreen',
-              page: () => LanguageSelectionScreen()),
+          GetPage(name: '/languageLocalizationScreen', page: () => LanguageSelectionScreen()),
           GetPage(name: '/welcome', page: () => WelcomeScreen()),
           GetPage(name: '/home', page: () => HomeScreen()),
           GetPage(name: '/translation', page: () => TranslationScreen()),

@@ -85,7 +85,7 @@ class _TranslationScreenState extends State<TranslationScreen> {
                     padding: EdgeInsets.symmetric(
                         vertical: Get.height * 0.1,
                         horizontal: Get.width * 0.2),
-                    child: Text('ALL LANGUAGES DICTIONARY',
+                    child: Text('ALL LANGUAGES DICTIONARY'.tr,
                         style: TextStyle(
                             fontFamily: 'Arial',
                             fontSize: 14,
@@ -189,9 +189,9 @@ class _TranslationScreenState extends State<TranslationScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         TextField(
-                          decoration: const InputDecoration(
+                          decoration:  InputDecoration(
                             border: InputBorder.none,
-                            hintText: 'Write Something...',
+                            hintText: 'Write Something....'.tr,
                           ),
                           controller:
                               translationScreenController.textEditingController,

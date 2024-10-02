@@ -60,22 +60,24 @@ class _HistoryScreenState extends State<HistoryScreen> {
           ),
           Obx(() {
             if (Get.find<HistoryScreenController>().historyList.isEmpty) {
-              return Container(
-                padding:  EdgeInsets.symmetric(vertical: Get.height * 0.2),
-                child: Column(
-                   crossAxisAlignment: CrossAxisAlignment.center,
-                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Center(child: Image.asset('assets/nodata.gif')),
-                    Text(
-                      "No history available".tr,
-                      style: TextStyle(
-                          fontFamily: 'Arial',
-                          color: Colors.grey.shade700,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700),
-                    ),
-                  ],
+              return Expanded(
+                child: Padding(
+                  padding:  EdgeInsets.symmetric(vertical: 50.0),
+                  child: Column(
+                     crossAxisAlignment: CrossAxisAlignment.center,
+                     mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Center(child: Image.asset('assets/nodata.gif')),
+                      Text(
+                        "No history available".tr,
+                        style: TextStyle(
+                            fontFamily: 'Arial',
+                            color: Colors.grey.shade700,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700),
+                      ),
+                    ],
+                  ),
                 ),
               );
             }
@@ -214,12 +216,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
                 return isAdLoaded
                     ? Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.blue,
-                            width: 1.5, // Border width
-                          ),
-                        ),
+
                         child: SizedBox(
                           width: Get.width,
                           height: historyScreenController
