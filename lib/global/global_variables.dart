@@ -28,6 +28,15 @@ class GlobalVariable {
   static RxBool LanguageSelectionScreenNativeAd = false.obs;
   static RxBool LanguageSelectionScreenBannerAd = false.obs;
 
+  static RxBool searchButtonInterAd = false.obs;
+  static RxBool translationInterAd = false.obs;
+  static RxBool historyInterAd = false.obs;
+  static RxBool saveWordsInterAd = false.obs;
+
+  static RxBool appOpenAd = false.obs;
+
+
+
 
 
 

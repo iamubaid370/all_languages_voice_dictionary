@@ -106,6 +106,7 @@ class AdsHelper {
   //   });
   // }
 
+
   void loadInterstitialAd() {
 
     if (
@@ -193,14 +194,19 @@ class AdsHelper {
     }
   }
 
+
+
   void showAppOpenAd() {
-    if (appOpenAd != null) {
-      GlobalVariable.isAppOpenAdShowing.value = true;
-      appOpenAdCallback();
-      appOpenAd?.show();
-    } else {
-      loadAppOpenAd();
+    if(GlobalVariable.appOpenAd.value==true){
+      if (appOpenAd != null) {
+        GlobalVariable.isAppOpenAdShowing.value = true;
+        appOpenAdCallback();
+        appOpenAd?.show();
+      } else {
+        loadAppOpenAd();
+      }
     }
+
   }
 
   void appOpenAdCallback() {

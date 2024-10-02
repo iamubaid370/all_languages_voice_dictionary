@@ -64,6 +64,7 @@ class SplashController extends GetxController {
     // TODO: implement onInit
     adsHelper.loadAppOpenAd();
     adsHelper.loadBannerAd();
+    adsHelper.loadInterstitialAd();
     super.onInit();
   }
 
@@ -81,7 +82,7 @@ class SplashController extends GetxController {
     /// If the value is false, do nothing (notifications are disabled)
   }
 
-  void _checkLanguageSelectionStatus() async {
+  void checkLanguageSelectionStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool? seenLanguageSelection =
         prefs.getBool('seenLanguageSelection') ?? false;
@@ -89,6 +90,8 @@ class SplashController extends GetxController {
 
     if (seenLanguageSelection) {
       if (seenOnboarding) {
+        GlobalVariable.appOpenAd==false ? adsHelper
+            .showInterstitialAd(nextScreen: '/welcome'):
         Get.offNamed('/welcome');
         print(seenOnboarding);
       } else {
@@ -127,9 +130,9 @@ class SplashController extends GetxController {
       if (currentStep >= totalSteps) {
         progressValue.value = 100.0;
         timer.cancel();
-        showProgressBar.value = false;
         adsHelper.showAppOpenAd();
-        _checkLanguageSelectionStatus();
+        showProgressBar.value = false;
+        //_checkLanguageSelectionStatus();
       } else {
         progressValue.value = (currentStep / totalSteps) * 100;
         currentStep++;
@@ -159,6 +162,13 @@ class SplashController extends GetxController {
       GlobalVariable.homeBannerAdRemoteConfig.value = remoteConfigService.getBool(RemoteConfigKeys.homeScreenBannerAd);
       GlobalVariable.LanguageSelectionScreenNativeAd.value = remoteConfigService.getBool(RemoteConfigKeys.LanguageSelectionScreenNativeAd);
       GlobalVariable.LanguageSelectionScreenBannerAd.value = remoteConfigService.getBool(RemoteConfigKeys.LanguageSelectionScreenBannerAd);
+
+      GlobalVariable.searchButtonInterAd.value = remoteConfigService.getBool(RemoteConfigKeys.searchButtonInterAd);
+      GlobalVariable.translationInterAd.value = remoteConfigService.getBool(RemoteConfigKeys.translationInterAd);
+      GlobalVariable.historyInterAd.value = remoteConfigService.getBool(RemoteConfigKeys.historyInterAd);
+      GlobalVariable.saveWordsInterAd.value = remoteConfigService.getBool(RemoteConfigKeys.saveWordsInterAd);
+
+      GlobalVariable.appOpenAd.value = remoteConfigService.getBool(RemoteConfigKeys.appOpenAd);
 
 
 
@@ -198,6 +208,14 @@ class SplashController extends GetxController {
         GlobalVariable.homeBannerAdRemoteConfig.value = remoteConfigService.getBool(RemoteConfigKeys.homeScreenBannerAd);
         GlobalVariable.LanguageSelectionScreenNativeAd.value = remoteConfigService.getBool(RemoteConfigKeys.LanguageSelectionScreenNativeAd);
         GlobalVariable.LanguageSelectionScreenBannerAd.value = remoteConfigService.getBool(RemoteConfigKeys.LanguageSelectionScreenBannerAd);
+
+
+        GlobalVariable.searchButtonInterAd.value = remoteConfigService.getBool(RemoteConfigKeys.searchButtonInterAd);
+        GlobalVariable.translationInterAd.value = remoteConfigService.getBool(RemoteConfigKeys.translationInterAd);
+        GlobalVariable.historyInterAd.value = remoteConfigService.getBool(RemoteConfigKeys.historyInterAd);
+        GlobalVariable.saveWordsInterAd.value = remoteConfigService.getBool(RemoteConfigKeys.saveWordsInterAd);
+        GlobalVariable.appOpenAd.value = remoteConfigService.getBool(RemoteConfigKeys.appOpenAd);
+
 
         print("++++++++++++++++++++++++++++++++++++");
 

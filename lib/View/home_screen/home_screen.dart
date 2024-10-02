@@ -448,28 +448,23 @@ class _HomeScreenState extends State<HomeScreen> {
                       image: 'assets/translations.png',
                       title: 'Translations'.tr,
                       onTap: () async {
-                        if (homeScreenController.adsHelper.interstitialAd !=
-                            null) {
-                          homeScreenController.adsHelper
-                              .showInterstitialAd(nextScreen: '/translation');
-                          print('interstitial ad load successfully');
-                        } else {
-                          Get.to(() => TranslationScreen());
-                        }
-                        // await homeScreenController.checkInternetConnection();
-                        //
-                        // if (!homeScreenController.isConnected.value) {
-                        //   Get.to(() => TranslationScreen());
-                        //   homeScreenController.showNoInternetDialog();
+
+                        if( GlobalVariable.translationInterAd.value == true ){
+                          if (homeScreenController.adsHelper.interstitialAd !=
+                              null) {
+                            homeScreenController.adsHelper
+                                .showInterstitialAd(nextScreen: '/translation');
+                            print('interstitial ad load successfuly');
+                          }
+                        }else{Get.to(() => TranslationScreen());}
+
+                        // if (homeScreenController.adsHelper.interstitialAd !=
+                        //     null) {
+                        //   homeScreenController.adsHelper
+                        //       .showInterstitialAd(nextScreen: '/translation');
+                        //   print('interstitial ad load successfully');
                         // } else {
-                        //   if (homeScreenController.adsHelper.interstitialAd !=
-                        //       null) {
-                        //     homeScreenController.adsHelper
-                        //         .showInterstitialAd(nextScreen: '/translation');
-                        //     print('interstitial ad load successfully');
-                        //   } else {
-                        //     Get.to(() => TranslationScreen());
-                        //   }
+                        //   Get.to(() => TranslationScreen());
                         // }
                       }),
                   SizedBox(width: Get.width * 0.03),
@@ -477,15 +472,25 @@ class _HomeScreenState extends State<HomeScreen> {
                     image: 'assets/favourite.png',
                     title: 'Save Words'.tr,
                     onTap: () {
-                      if (homeScreenController.adsHelper.interstitialAd !=
-                          null) {
-                        homeScreenController.adsHelper
-                            .showInterstitialAd(nextScreen: '/favourite');
-                        print('interstitial ad load successfuly');
-                      } else {
-                        Get.to(() => FavouriteScreen());
-                        print('interstitial ad not loaded');
-                      }
+
+                      if( GlobalVariable.saveWordsInterAd.value == true ){
+                        if (homeScreenController.adsHelper.interstitialAd !=
+                            null) {
+                          homeScreenController.adsHelper
+                              .showInterstitialAd(nextScreen: '/favourite');
+                          print('interstitial ad load successfuly');
+                        }
+                      }else{Get.to(() => FavouriteScreen());}
+
+                      // if (homeScreenController.adsHelper.interstitialAd !=
+                      //     null) {
+                      //   homeScreenController.adsHelper
+                      //       .showInterstitialAd(nextScreen: '/favourite');
+                      //   print('interstitial ad load successfuly');
+                      // } else {
+                      //   Get.to(() => FavouriteScreen());
+                      //   print('interstitial ad not loaded');
+                      // }
                     },
                   ),
                   SizedBox(width: Get.width * 0.03),
@@ -493,15 +498,25 @@ class _HomeScreenState extends State<HomeScreen> {
                       image: 'assets/history.png',
                       title: 'History'.tr,
                       onTap: () {
-                        if (homeScreenController.adsHelper.interstitialAd !=
-                            null) {
-                          homeScreenController.adsHelper
-                              .showInterstitialAd(nextScreen: '/history');
-                          print('interstitial ad load successfuly');
-                        } else {
-                          print('interstitial ad not loaded');
-                          Get.to(() => HistoryScreen());
-                        }
+
+                        if( GlobalVariable.historyInterAd.value == true ){
+                          if (homeScreenController.adsHelper.interstitialAd !=
+                              null) {
+                            homeScreenController.adsHelper
+                                .showInterstitialAd(nextScreen: '/history');
+                            print('interstitial ad load successfuly');
+                          }
+                        }else{Get.to(() => HistoryScreen());}
+                        //
+                        // if (homeScreenController.adsHelper.interstitialAd !=
+                        //     null) {
+                        //   homeScreenController.adsHelper
+                        //       .showInterstitialAd(nextScreen: '/history');
+                        //   print('interstitial ad load successfuly');
+                        // } else {
+                        //   print('interstitial ad not loaded');
+                        //   Get.to(() => HistoryScreen());
+                        // }
                       }),
                   SizedBox(
                     width: Get.width * 0.03,
